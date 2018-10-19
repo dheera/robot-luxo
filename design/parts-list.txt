@@ -1,8 +1,10 @@
 heat set inserts
-Initeq M3-0.5
-https://www.amazon.com/gp/product/B077CL322T/ref=oh_aui_search_detailpage?ie=UTF8&psc=1
+Initeq M3-0.5 short (OD 5.59mm, L 3.81mm)
+https://www.amazon.com/gp/product/B077CJV3Z9/
+McMaster 94180A331
+https://www.mcmaster.com/94180a331
 
 servos
 Savox SC-1251MG
-https://www.amazon.com/gp/product/B004K3FAJE/ref=oh_aui_detailpage_o00_s00?ie=UTF8&psc=1
+https://www.amazon.com/gp/product/B004K3FAJE/
 
