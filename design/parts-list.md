@@ -30,4 +30,4 @@ Description:
 
 Sources:
 * [TRB RC 8x16x5](https://www.amazon.com/gp/product/B00ZVF8EMU/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1)
-* [McMaster7804K117](https://www.mcmaster.com/7804k117)
+* [McMaster 7804K117](https://www.mcmaster.com/7804k117)

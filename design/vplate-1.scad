@@ -27,11 +27,11 @@ union() {
         
         // rod hole
         translate([-28,0,0])
-        cylinder(d=8, h = 10, center = true, $fn=128);
+        cylinder(d=5, h = 10, center = true, $fn=128);
         
         // rod hole
         translate([5,-35,0])
-        cylinder(d=8, h = 10, center = true, $fn=128);
+        cylinder(d=5, h = 10, center = true, $fn=128);
     }
 
 
@@ -67,14 +67,14 @@ union() {
         
         // rod hole
         translate([17,0,0])
-        cylinder(d=8, h = 10, center = true, $fn=128);
+        cylinder(d=5, h = 10, center = true, $fn=128);
         
         // rod hole
         translate([-28,0,0])
-        cylinder(d=8, h = 10, center = true, $fn=128);
+        cylinder(d=5, h = 10, center = true, $fn=128);
         
         // rod hole
         translate([5,-35,0])
-        cylinder(d=8, h = 10, center = true, $fn=128);
+        cylinder(d=5, h = 10, center = true, $fn=128);
     }
 }

@@ -1,18 +1,21 @@
 include <include/tornillo.scad>
 
-d_solid = 8;
-thread_length = 14;
-solid_length = 24;
+d_solid = 5;
+thread_length = 3.5;
+solid_length = 34;
 edge_length = 5;
-thread_diam = 8;
+pitch = 0.8; // for M5 [0]
+pitch_diameter = 4.480; // for M5 [0]
+
+// [0] https://www.trfastenings.com/products/knowledgebase/thread-geometry/metric-coarse-standard
 
 module threaded_part() {
     difference() {
     translate([0,0,-thread_length/2])
     trapezoidThreadNegativeSpace(
 	length=thread_length,				// axial length of the threaded rod
-	pitch=0.75,				// axial distance from crest to crest
-	pitchRadius=thread_diam/2 - 0.5,			// radial distance from center to mid-profile
+	pitch=pitch,				// axial distance from crest to crest
+	pitchRadius=pitch_diameter/2,			// radial distance from center to mid-profile
 	threadHeightToPitch=0.4,	// ratio between the height of the profile and the pitch
 						// std value for Acme or metric lead screw is 0.5
 	profileRatio=0.4,			// ratio between the lengths of the raised part of the profile and the pitch
@@ -36,7 +39,7 @@ module threaded_part() {
 
 difference() {
     
-translate([0,0,3.2])
+translate([0,0,2])
 rotate([0,90,0])
 union() {
     

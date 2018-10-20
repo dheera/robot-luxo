@@ -1,6 +1,6 @@
 // distance between two pivot points
 center_distance = 87;
-thickness = 10;
+thickness = 8;
 
 // servo end
 difference() {
@@ -35,13 +35,13 @@ difference() {
 
 // bar in-between
 translate([10.5, -4, 0])
-cube([center_distance-19, 8, thickness]);
+cube([center_distance-16, 8, thickness]);
 
 // end hole
 translate([center_distance, 0, 0])
 difference() {
     // outer
-    cylinder(d = 20, h = thickness, $fn = 128);
+    cylinder(d = 14, h = thickness, $fn = 128);
     // inner
-    cylinder(d = 16, h = thickness, $fn = 128);
+    cylinder(d = 10, h = thickness, $fn = 128);
 }
