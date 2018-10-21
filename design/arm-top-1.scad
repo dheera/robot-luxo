@@ -6,7 +6,7 @@ thickness = 8;
 translate([0, 0, 0])
 difference() {
     cylinder(d = 14, h = thickness, $fn = 128);
-    cylinder(d = 10.1, h = thickness, $fn = 128);
+    cylinder(d = 10, h = thickness, $fn = 128);
 }
 
 // bar in-between
@@ -17,7 +17,7 @@ cube([center_distance/2-9.5, 8, thickness]);
 translate([center_distance/2, 0, 0])
 difference() {
     cylinder(d = 12, h = thickness, $fn = 128);
-    cylinder(d = 6.1, h = thickness, $fn = 128);
+    cylinder(d = 6.2, h = thickness, $fn = 128);
 }
 
 // bar in-between
@@ -28,5 +28,5 @@ cube([center_distance/2-9.5, 8, thickness]);
 translate([center_distance, 0, 0])
 difference() {
     cylinder(d = 14, h = thickness, $fn = 128);
-    cylinder(d = 10.1, h = thickness, $fn = 128);
+    cylinder(d = 10, h = thickness, $fn = 128);
 }

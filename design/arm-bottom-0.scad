@@ -40,12 +40,13 @@ difference() {
     
     translate([99,14,7])
     rotate([90,0,0])
-    cylinder(d=10.1,h=4.05, center=true, $fn=64);
+    cylinder(d=10,h=4.05, center=true, $fn=64);
     
     translate([99,0,7])
     rotate([90,0,0])
     cylinder(d=6.5,h=50, center=true, $fn=64);
 }
+
 
 translate([0,60,0])
 mirror([0,1,0])
@@ -73,7 +74,7 @@ difference() {
     
     translate([99,14,7])
     rotate([90,0,0])
-    cylinder(d=10.1,h=4.05, center=true, $fn=64);
+    cylinder(d=10,h=4.05, center=true, $fn=64);
     
     translate([99,0,7])
     rotate([90,0,0])
