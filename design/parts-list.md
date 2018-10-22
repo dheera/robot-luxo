@@ -1,33 +1,15 @@
 ## COTS parts
 
-### heat set inserts
+### Mechanical parts
 
-Description:
-* thread = M3
-* OD = 5.6 mm
-* L = 3.8 mm
+* [Heat-set Insert](https://www.mcmaster.com/94180a331), M3, OD=5.6mm, L=3.8mm ([Alternative](https://www.amazon.com/gp/product/B077CJV3Z9/))
+* [Bearing](https://www.mcmaster.com/7804k106), ID=5mm, OD=10mm, L=4mm ([Alternative](https://www.amazon.com/gp/product/B00UW7SFU8/))
+* [Button Hex Head Drive Screw](https://www.mcmaster.com/92095A222), M5, L=40mm, partially threaded
+* [Button Hex Head Drive Screw](https://www.mcmaster.com/92095A228), M5, L=50mm, partially threaded
+* [Button Hex Head Drive Screw](https://www.mcmaster.com/92095a225), M5, L=60mm, partially threaded
+* [Nylon-Insert Locknut](https://www.mcmaster.com/90576a104), M5
 
-Sources:
-* [Initeq M3-0.5 short](https://www.amazon.com/gp/product/B077CJV3Z9/)
-* [McMaster 94180A331](https://www.mcmaster.com/94180a331)
+### Servos
 
-
-### servos
-
-Description:
-* low profile
-
-Sources:
 * [Savox SC-1251MG](https://www.amazon.com/gp/product/B004K3FAJE/)
 
-
-### bearings
-
-Description:
-* ID = 8 mm
-* OD = 16 mm
-* L = 5 mm
-
-Sources:
-* [TRB RC 8x16x5](https://www.amazon.com/gp/product/B00ZVF8EMU/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1)
-* [McMaster 7804K117](https://www.mcmaster.com/7804k117)
