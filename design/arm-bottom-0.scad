@@ -2,12 +2,12 @@ difference() {
     linear_extrude(height=14)
     polygon([
   [0,0],
-  [70,0],
-  [82,6],
-  [106,6],
-  [106,16],
-  [78,16],
-  [66,10],
+  [80,0],
+  [92,6],
+  [112,6],
+  [112,16],
+  [88,16],
+  [76,10],
   [0,10],
   [0,0]
     ]);
@@ -34,17 +34,13 @@ difference() {
     rotate([90,0,0])
     cylinder(d=5.5,h=6, $fn=32);
     
-    translate([57,0,7])
+    translate([72,0,7])
     rotate([90,0,0])
     cylinder(d=5.5,h=50, center=true, $fn=32);
     
-    translate([99,14,7])
+    translate([104,14,7])
     rotate([90,0,0])
-    cylinder(d=10,h=4.05, center=true, $fn=64);
-    
-    translate([99,0,7])
-    rotate([90,0,0])
-    cylinder(d=6.5,h=50, center=true, $fn=64);
+    cylinder(d=10,h=50, center=true, $fn=64);
 }
 
 
@@ -54,12 +50,12 @@ difference() {
     linear_extrude(height=14)
     polygon([
   [0,0],
-  [70,0],
-  [82,6],
-  [106,6],
-  [106,16],
-  [78,16],
-  [66,10],
+  [80,0],
+  [92,6],
+  [112,6],
+  [112,16],
+  [88,16],
+  [76,10],
   [0,10],
   [0,0]
     ]);
@@ -68,15 +64,12 @@ difference() {
     rotate([90,0,0])
     cylinder(d=5.2,h=50, center=true, $fn=32);
     
-    translate([57,0,7])
+    translate([72,0,7])
     rotate([90,0,0])
     cylinder(d=5.2,h=50, center=true, $fn=32);
     
-    translate([99,14,7])
+    translate([104,14,7])
     rotate([90,0,0])
-    cylinder(d=10,h=4.05, center=true, $fn=64);
+    cylinder(d=10,h=50, center=true, $fn=64);
     
-    translate([99,0,7])
-    rotate([90,0,0])
-    cylinder(d=6.5,h=50, center=true, $fn=64);
 }
