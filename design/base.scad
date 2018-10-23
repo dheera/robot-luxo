@@ -112,11 +112,46 @@ module servo() {
 }
 }
 
-union() {
-    cylinder(d=180,h=1.5, $fn=128);
-    translate([85,0,0])
-    cylinder(d=4,h=4,$fn=32);
+module lidmount() {
+    difference() {
+        cylinder(d=8,h=8,$fn=32);
+        cylinder(d=3.5,h=8,$fn=32);
+    }
 }
+
+module lidmountcutout() {
+    translate([0,0,0])
+    cylinder(d=6,h=5, $fn=32, center=true);
+}
+
+difference() {
+  union() {
+    cylinder(d=180,h=1.5, $fn=256);
+    translate([0,0,1.5])
+    difference() {
+        cylinder(d=180,h=3, $fn=256);
+        cylinder(d=174,h=10, $fn=256, center=true);
+    }
+    translate([80,0,1.5])
+    lidmount();
+    translate([-80,0,1.5])
+    lidmount();
+    translate([0,80,1.5])
+    lidmount();
+    translate([0,-80,1.5])
+    lidmount();
+  }
+  
+        translate([80,0,0])
+        lidmountcutout();
+        translate([-80,0,0])
+        lidmountcutout();
+        translate([0,80,0])
+        lidmountcutout();
+        translate([0,-80,0])
+        lidmountcutout();
+  }
+  
 
 translate([0,0,1.5]) {
     
