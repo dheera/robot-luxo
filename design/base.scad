@@ -124,6 +124,13 @@ module lidmountcutout() {
     cylinder(d=6,h=5, $fn=32, center=true);
 }
 
+module ventcutout(l=30,w=10) {
+    for (a = [0:4:l]) {
+    translate([0,a,0])
+    cube([w,2,10], center=true);
+    }
+}
+
 difference() {
   union() {
     cylinder(d=180,h=1.5, $fn=256);
@@ -150,6 +157,11 @@ difference() {
         lidmountcutout();
         translate([0,-80,0])
         lidmountcutout();
+  
+        translate([53,16,0])
+        ventcutout(l=37,w=18);
+        translate([-53,16,0])
+        ventcutout(l=37,w=18);
   }
   
 
