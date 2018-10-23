@@ -18,7 +18,7 @@ module dcdc() {
     border(w=52,h=27);
 }
 
-module raspberrypi(standoff_height=2) {
+module raspberrypi(standoff_height=4) {
     border(w=85,h=56);
     
     translate([-85/2 + 3.5,49/2,0])
@@ -34,7 +34,7 @@ module raspberrypi(standoff_height=2) {
     standoff(h=standoff_height);
 }
 
-module imu(standoff_height=2) {
+module imu(standoff_height=4) {
     w = 1.05*25.4;
     h = 0.8*25.4;
     border(w=w, h=h);
@@ -52,7 +52,7 @@ module imu(standoff_height=2) {
     standoff(h=standoff_height);
 }
 
-module servodriver(standoff_height=2) {
+module servodriver(standoff_height=4) {
 
     border(w=2.45*25.4, h=(0.88+0.13)*25.4);
     
@@ -79,14 +79,14 @@ module servo() {
     
     union() {
     difference() {
-        translate([-11,0,8])
-        cube([60,25,16], center=true);
+        translate([-11,0,9])
+        cube([58,25,21], center=true);
         savox_1251mg_cutout(h=50, screw_diameter=4.7);
         
-        translate([22,0,8])
-        cube([100,4,16], center=true);
+        translate([22,0,5])
+        cube([100,4,50], center=true);
         
-        translate([0,0,5])
+        translate([0,0,10])
         rotate([0,90,0])
         cylinder(h=100,d=8, $fn=32);
         
@@ -94,15 +94,15 @@ module servo() {
         cylinder(h=20, d=8, $fn=32);
     }
     difference() {
-        translate([-11,0,6])
-        cube([60,25,12], center=true);
-        translate([-11,0,6])
+        translate([-11,0,9])
+        cube([58,25,12], center=true);
+        translate([-11,0,9])
         cube([42,25,12], center=true);
         
-        translate([22,0,8])
-        cube([100,4,16], center=true);
+        translate([22,0,5])
+        cube([100,4,50], center=true);
         
-        translate([0,0,5])
+        translate([0,0,10])
         rotate([0,90,0])
         cylinder(h=100,d=8, $fn=32);
         
@@ -112,7 +112,11 @@ module servo() {
 }
 }
 
-cylinder(d=180,h=1.5, $fn=128);
+union() {
+    cylinder(d=180,h=1.5, $fn=128);
+    translate([85,0,0])
+    cylinder(d=4,h=4,$fn=32);
+}
 
 translate([0,0,1.5]) {
     
