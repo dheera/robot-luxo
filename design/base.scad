@@ -34,6 +34,10 @@ module raspberrypi(standoff_height=4) {
     standoff(h=standoff_height);
 }
 
+module arduinopromicro(standoff_height=4) {
+    border(w=36, h=18);
+}
+
 module imu(standoff_height=4) {
     w = 1.05*25.4;
     h = 0.8*25.4;
@@ -78,38 +82,57 @@ module servodriver(standoff_height=4) {
 module servo() {
     
     union() {
-    difference() {
-        translate([-11,0,9])
-        cube([58,25,21], center=true);
-        savox_1251mg_cutout(h=50, screw_diameter=4.7);
+        difference() {
+            union() {
+                translate([-11-58/2,-25/2,0])
+                cube([58,25,17.5]);
+    
+                intersection() {
+                    difference() {
+                        cylinder(d=46,h=28, $fn=128);
+                        translate([0,0,24])
+                        cylinder(d=43,h=28, $fn=32);
+                        cylinder(d=27,h=28);
+                        translate([-4,0,0])
+                        cube([42,21,80], center=true);
+                    }
+                }
+            }
+            
+            // servo cutout
+            translate([0,0,50/2])
+            savox_1251mg_cutout(h=50, screw_diameter=4.7, screw_height=14);
         
-        translate([22,0,5])
-        cube([100,4,50], center=true);
+            // wiring cutout
+            union() {
+                translate([22,0,0])
+                cube([100,4,100], center=true);
         
-        translate([0,0,10])
-        rotate([0,90,0])
-        cylinder(h=100,d=8, $fn=32);
+                translate([0,0,5])
+                rotate([0,90,0])
+                cylinder(h=100,d=8, $fn=32);
         
-        translate([8,0,0])
-        cylinder(h=20, d=8, $fn=32);
+                translate([8,0,0])
+                cylinder(h=20, d=8, $fn=32);
+            }
+        }
+        /*difference() {
+            translate([-11,0,9])
+            cube([58,25,12], center=true);
+            translate([-11,0,9])
+            cube([42,25,12], center=true);
+        
+            translate([22,0,5])
+            cube([100,4,50], center=true);
+            
+            translate([0,0,10])
+            rotate([0,90,0])
+            cylinder(h=100,d=8, $fn=32);
+            
+            translate([8,0,0])
+            cylinder(h=20, d=8, $fn=32);
+        }*/
     }
-    difference() {
-        translate([-11,0,9])
-        cube([58,25,12], center=true);
-        translate([-11,0,9])
-        cube([42,25,12], center=true);
-        
-        translate([22,0,5])
-        cube([100,4,50], center=true);
-        
-        translate([0,0,10])
-        rotate([0,90,0])
-        cylinder(h=100,d=8, $fn=32);
-        
-        translate([8,0,0])
-        cylinder(h=20, d=8, $fn=32);
-    }
-}
 }
 
 module lidmount() {
@@ -124,6 +147,11 @@ module lidmountcutout() {
     cylinder(d=6,h=5, $fn=32, center=true);
 }
 
+module rubberfootcutout() {
+    translate([0,0,0])
+    cylinder(d=10,h=0.5, $fn=32, center=true);
+}
+
 module ventcutout(l=30,w=10) {
     for (a = [0:4:l]) {
     translate([0,a,0])
@@ -133,29 +161,37 @@ module ventcutout(l=30,w=10) {
 
 difference() {
   union() {
-    cylinder(d=180,h=1.5, $fn=256);
+    cylinder(d=185,h=1.5, $fn=256);
     translate([0,0,1.5])
     difference() {
-        cylinder(d=180,h=3, $fn=256);
-        cylinder(d=174,h=10, $fn=256, center=true);
+        cylinder(d=185,h=3, $fn=256);
+        cylinder(d=179,h=10, $fn=256, center=true);
     }
-    translate([80,0,1.5])
+    translate([78,23,1.5])
     lidmount();
-    translate([-80,0,1.5])
+    translate([78,-23,1.5])
     lidmount();
-    translate([0,80,1.5])
+    translate([-78,23,1.5])
     lidmount();
-    translate([0,-80,1.5])
+    translate([-78,-23,1.5])
+    lidmount();
+    translate([0,84,1.5])
+    lidmount();
+    translate([0,-84,1.5])
     lidmount();
   }
   
-        translate([80,0,0])
+        translate([78,23,0])
         lidmountcutout();
-        translate([-80,0,0])
+        translate([78,-23,0])
         lidmountcutout();
-        translate([0,80,0])
+        translate([-78,23,0])
         lidmountcutout();
-        translate([0,-80,0])
+        translate([-78,-23,0])
+        lidmountcutout();
+        translate([0,84,0])
+        lidmountcutout();
+        translate([0,-84,0])
         lidmountcutout();
   
         translate([53,16,0])
@@ -167,24 +203,30 @@ difference() {
 
 translate([0,0,1.5]) {
     
-    translate([0,42 ,0])
+    translate([0,51.5,0])
     rotate([0,0,180])
     raspberrypi();
     
-    translate([31,0,0])
+    translate([34,0,0])
     rotate([0,0,90])
     imu();
     
-    translate([55,-17.5,0])
+    translate([34,-33,0])
+    rotate([0,0,90])
+    arduinopromicro();
+    
+    translate([58,-17.5,0])
     rotate([0,0,90])
     servodriver();
     
-    translate([0,-28,0])
+    translate([-8,-37,0])
     dcdc();
     
-    translate([0,-59,0])
+    translate([-8,-65,0])
     dcdc();
     
     servo();
     
 }
+
+
