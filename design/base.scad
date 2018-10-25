@@ -1,8 +1,8 @@
 include <include/servo.scad>
 
-module standoff(h=3, id=3) {
+module standoff(h=4, id=2.5) {
     difference() {
-        cylinder(d=id+2, h=h, $fn=32);
+        cylinder(d=id+2.5, h=h, $fn=32);
         cylinder(d=id, h=h+0.2, $fn=32);
     }
 }
@@ -36,6 +36,20 @@ module raspberrypi(standoff_height=4) {
 
 module arduinopromicro(standoff_height=4) {
     border(w=36, h=18);
+}
+
+module trinketm0(standoff_height=4) {
+    w=0.6*25.4;
+    h=1.05*25.4;
+    border(w=w+4, h=h+4);
+    translate([-w/2+0.075*25.4, -h/2+0.15*25.4, 0])
+    standoff(h=standoff_height);
+    translate([-w/2+(0.075+0.45)*25.4, -h/2+0.15*25.4, 0])
+    standoff(h=standoff_height);
+    translate([-w/2+0.075*25.4, -h/2+0.79*25.4, 0])
+    standoff(h=standoff_height);
+    translate([-w/2+(0.075+0.45)*25.4, -h/2+0.79*25.4, 0])
+    standoff(h=standoff_height);
 }
 
 module imu(standoff_height=4) {
@@ -89,11 +103,11 @@ module servo() {
     
                 intersection() {
                     difference() {
-                        cylinder(d=46,h=28, $fn=128);
-                        translate([0,0,24])
-                        cylinder(d=43,h=28, $fn=32);
-                        cylinder(d=27,h=28);
-                        translate([-4,0,0])
+                        cylinder(d=46,h=29, $fn=128);
+                        translate([0,0,25])
+                        cylinder(d=43,h=29, $fn=64);
+                        cylinder(d=27,h=29);
+                        translate([-3.5,0,0])
                         cube([42,21,80], center=true);
                     }
                 }
@@ -106,7 +120,7 @@ module servo() {
             // wiring cutout
             union() {
                 translate([22,0,0])
-                cube([100,4,100], center=true);
+                cube([100,4,35], center=true);
         
                 translate([0,0,5])
                 rotate([0,90,0])
@@ -165,7 +179,7 @@ difference() {
     translate([0,0,1.5])
     difference() {
         cylinder(d=185,h=3, $fn=256);
-        cylinder(d=179,h=10, $fn=256, center=true);
+        cylinder(d=181,h=10, $fn=256, center=true);
     }
     translate([78,23,1.5])
     lidmount();
@@ -196,6 +210,7 @@ difference() {
   
         translate([53,16,0])
         ventcutout(l=37,w=18);
+  
         translate([-53,16,0])
         ventcutout(l=37,w=18);
   }
@@ -212,8 +227,8 @@ translate([0,0,1.5]) {
     imu();
     
     translate([34,-33,0])
-    rotate([0,0,90])
-    arduinopromicro();
+    rotate([0,0,180])
+    trinketm0();
     
     translate([58,-17.5,0])
     rotate([0,0,90])
