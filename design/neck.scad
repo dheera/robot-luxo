@@ -21,7 +21,7 @@ difference() {
     wheelcutout(r=17/2, d=1.5, h=4);
     wheelcutout(r=9/2, d=1.5, h=4);
     
-    translate([0,-10,13])
+    translate([0,-10,12])
     cube([12,20,50]);
     
     translate([-2,-10,31])
@@ -48,7 +48,7 @@ difference() {
 }
     
 difference() {
-    translate([0,0,13])
-    cylinder(d1=20,d2=15, h=5, $fn=fn);
+    translate([0,0,12])
+    cylinder(d1=20,d2=15, h=3, $fn=fn);
     cylinder(d=5,h=60, $fn=16);
 }

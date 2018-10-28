@@ -38,6 +38,18 @@ module arduinopromicro(standoff_height=4) {
     border(w=36, h=18);
 }
 
+module power() {
+    difference() {
+        translate([0,-30/2,0])
+        cube([15,30,3]);
+        
+        translate([8,-9,0])
+        cylinder(d=4.7,h=5, $fn=16);
+        translate([8,9,0])
+        cylinder(d=4.7,h=5, $fn=16);
+    }
+}
+
 module trinketm0(standoff_height=4) {
     w=0.6*25.4;
     h=1.05*25.4;
@@ -103,10 +115,11 @@ module servo() {
     
                 intersection() {
                     difference() {
-                        cylinder(d=46,h=29, $fn=128);
+                        cylinder(d=46,h=29, $fn=256);
                         translate([0,0,25])
                         cylinder(d=43,h=29, $fn=64);
-                        cylinder(d=27,h=29);
+                        translate([0,0,17.501])
+                        cylinder(d=27,h=29, $fn=64);
                         translate([-3.5,0,0])
                         cube([42,21,80], center=true);
                     }
@@ -175,10 +188,10 @@ module ventcutout(l=30,w=10) {
 
 difference() {
   union() {
-    cylinder(d=185,h=1.5, $fn=256);
+    cylinder(d=185,h=1.5, $fn=512);
     translate([0,0,1.5])
     difference() {
-        cylinder(d=185,h=3, $fn=256);
+        cylinder(d=185,h=3, $fn=512);
         cylinder(d=181,h=10, $fn=256, center=true);
     }
     translate([78,23,1.5])
@@ -239,6 +252,9 @@ translate([0,0,1.5]) {
     
     translate([-8,-65,0])
     dcdc();
+    
+    translate([-91,0,0])
+    power();
     
     servo();
     
