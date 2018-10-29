@@ -20,6 +20,8 @@ module dcdc() {
     cylinder(d=3.5,d2=4.5,h=4,$fn=16);
     translate([20,0,0])
     cylinder(d1=3.5,d2=3.5,h=4,$fn=16);
+    
+    text("DC-DC", size=4, halign="center", valign="center");
 }
 
 module raspberrypi(standoff_height=4.5) {
@@ -36,10 +38,9 @@ module raspberrypi(standoff_height=4.5) {
     
     translate([-85/2 + 3.5 + 58,-49/2,0])
     standoff(h=standoff_height);
-}
-
-module arduinopromicro(standoff_height=4) {
-    border(w=36, h=18);
+    
+    linear_extrude(0.5)
+    text("RPI", size=8, halign="center", valign="center");
 }
 
 module power() {
@@ -66,6 +67,10 @@ module trinketm0(standoff_height=4) {
     standoff(h=standoff_height);
     translate([-w/2+(0.075+0.45)*25.4, -h/2+0.79*25.4, 0])
     standoff(h=standoff_height);
+    
+    rotate([0,0,-90])
+    linear_extrude(0.5)
+    text("TRINKET", size=4, halign="center", valign="center");
 }
 
 module imu(standoff_height=4) {
@@ -84,6 +89,9 @@ module imu(standoff_height=4) {
     
     translate([-w/2 + 0.95*25.4, -h/2 + 0.7*25.4, 0])
     standoff(h=standoff_height);
+    
+    linear_extrude(0.5)
+    text("IMU", size=4, halign="center", valign="center");
 }
 
 module servodriver(standoff_height=4) {
@@ -105,7 +113,9 @@ module servodriver(standoff_height=4) {
     translate([w0+2.33*25.4, h0+0.88*25.4, 0])
     standoff(h=standoff_height);
 
-
+    translate([12,0,0])
+    linear_extrude(0.5)
+    text("SERVO", size=4, halign="center", valign="center");
 
 }
 
