@@ -21,6 +21,7 @@ module dcdc() {
     translate([20,0,0])
     cylinder(d1=3.5,d2=3.5,h=4,$fn=16);
     
+    linear_extrude(0.5)
     text("DC-DC", size=4, halign="center", valign="center");
 }
 
