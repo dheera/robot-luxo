@@ -1,6 +1,8 @@
 # robot-luxo
 
-Rendition of Pixar's Luxo Jr. with servo mounts.
+Rendition of Pixar's Luxo Jr. with servo mounts, an IMU, and a Raspberry Pi. Using to explore reinforcement learning. Work in progress.
+
+![Picture](https://raw.githubusercontent.com/dheera/robot-luxo/master/picture.jpg "Picture")
 
 ## Assembly
 
