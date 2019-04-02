@@ -1,22 +1,56 @@
 #!/usr/bin/env node
 "use strict";
 
+const DATA_IN = 'i';
+const DATA_OUT = 'o';
+
 const sshpk = require('sshpk');
 const fs = require('fs');
 const os = require('os');
 const io = require('socket.io-client');
 const ros = require('rosnodejs');
+const std_msgs = ros.require('std_msgs');
 const geometry_msgs = ros.require('geometry_msgs');
 
 const remoteConfig = {
-  "name": "ganymede",
+  "name": "luxo",
   "ui": {
     "fixed": [
        {
-         "type": "stick",
-         "id": "stick0",
-         "aspectRatio": 1.0,
-       }
+         "type": "slider",
+         "id": "slider0",
+         "min": 0,
+         "max": 65535,
+         "value": 32767,
+       },
+       {
+         "type": "slider",
+         "id": "slider1",
+         "min": 0,
+         "max": 65535,
+         "value": 32767,
+       },
+       {
+         "type": "slider",
+         "id": "slider2",
+         "min": 0,
+         "max": 65535,
+         "value": 32767,
+       },
+       {
+         "type": "slider",
+         "id": "slider3",
+         "min": 0,
+         "max": 65535,
+         "value": 32767,
+       },
+       {
+         "type": "slider",
+         "id": "slider4",
+         "min": 0,
+         "max": 65535,
+         "value": 32767,
+       },
     ]
   }
 }
@@ -32,7 +66,7 @@ let privateKey = sshpk.parsePrivateKey(privateKeyText, 'ssh');
 
 let nh = null;
 let sub_rosout = null;
-let pub_motion = null;
+let pub_command = null;
 
 ros.initNode('remote_node').then(() => {
   ros.log.info("initialized")
@@ -47,7 +81,7 @@ ros.initNode('remote_node').then(() => {
     });
   });
 
-  pub_motion = nh.advertise('/motion/level2', 'geometry_msgs/Twist')
+  pub_command = nh.advertise('/pwm/command', 'std_msgs/Int32MultiArray')
 
 });
 
@@ -73,9 +107,13 @@ socket.on('auth_verify', (msg, callback) => {
   callback({signature: signature.toString(), type: signature.type});
 });
 
-socket.on('e', (data) => {
-  console.log('e', data);
-  if(data[0] === "stick0") onStick(data[1]);
+socket.on(DATA_IN, (data) => {
+  console.log('DATA_IN', data);
+  if(data[0] === 'slider0' && data[1] === 'v') {
+    let m = new std_msgs.msg.Int32MultiArray();
+    m.data = [ data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+    pub_command.publish(m);
+  }
 });
 
 socket.on('auth_status', (status) => {
