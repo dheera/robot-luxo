@@ -9,6 +9,8 @@
         <param name="device" type="string" value="/dev/i2c-1"/>
         <param name="frame_id" type="string" value="pwm"/>
     </node>
+    <node ns="system" name="remote_node" pkg="remote" type="remote_node" respawn="true" respawn_delay="2">
+    </node>
     <node ns="system" name="system_stats_node" pkg="system_stats" type="system_stats_node" respawn="true" respawn_delay="2">
     </node>
 </launch>
