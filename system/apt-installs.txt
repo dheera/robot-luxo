@@ -1,10 +1,12 @@
-vim
-libi2c-dev
+htop
 i2c-tools
+libi2c-dev
+libogg-dev
 libraspberrypi-dev
 libtheora-dev
-libogg-dev
 libvorbis-dev
-screen
 npm
-
+python3-pip
+python-pip
+screen
+vim
