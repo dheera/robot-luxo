@@ -1,5 +1,0 @@
-<launch>
-  <node pkg="imu_bno055" type="imu_bno055_node" name="imu_bno055_node" ns="imu"/>
-  <node pkg="servo_pca9685" type="servo_pca9685_node" name="servo_pca9685_node" ns="status"/>
-  <node pkg="status_system" type="status_system_node" name="status_system_node" ns="status"/>
-</launch>
