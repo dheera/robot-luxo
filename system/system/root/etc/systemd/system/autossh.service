@@ -1,0 +1,13 @@
+[Unit]
+Description=Autossh service
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=pi
+ExecStart=/bin/bash -c "AUTOSSH_GATETIME=0 AUTOSSH_LOGFILE=/home/pi/.autossh.log autossh -f -N -o ServerAliveCountMax=2 -o ServerAliveInterval=5 -o PubkeyAuthentication=yes -o PasswordAuthentication=no -o ConnectTimeout=5 -o BatchMode=yes -R 2220:localhost:22 dheera@relay.dheera.net"
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

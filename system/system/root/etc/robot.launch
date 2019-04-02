@@ -1,0 +1,55 @@
+<launch>
+    <node ns="imu" name="imu_node" pkg="imu_bno055" type="bno055_i2c_node" respawn="true" respawn_delay="2">
+        <param name="device" type="string" value="/dev/i2c-3"/>
+        <param name="address" type="int" value="40"/>
+        <param name="rate" type="int" value="30"/>
+        <param name="frame_id" type="string" value="imu"/>
+    </node>
+    <node ns="pwm" name="pwm_node" pkg="pwm_pca9685" type="pca9685_node" respawn="true" respawn_delay="2">
+        <param name="device" type="string" value="/dev/i2c-1"/>
+        <param name="frame_id" type="string" value="pwm"/>
+    </node>
+    <node name="power_node" pkg="power_ina219" type="ina219_node" respawn="true" respawn_delay="2">
+        <param name="device" type="string" value="/dev/i2c-1"/>
+        <param name="frame_id" type="string" value="power"/>
+    </node>
+    <node ns="motion" name="motion_controller_node" pkg="motion_controller" type="motion_controller_node" respawn="true" respawn_delay="2">
+        <param name="flip_left" type="bool" value="true"/>
+        <param name="flip_right" type="bool" value="true"/>
+    </node>
+    <node ns="system" name="system_stats_node" pkg="system_stats" type="system_stats_node" respawn="true" respawn_delay="2">
+    </node>
+    <node ns="system" name="remote_node" pkg="remote" type="remote_node" respawn="true" respawn_delay="2">
+    </node>
+
+  <node type="raspicam_node" pkg="raspicam_node" name="camera" output="screen">
+    <param name="private_topics" value="true"/>
+
+    <param name="camera_frame_id" value="camera"/>
+    <param name="enable_raw" value="false"/>
+    <param name="enable_imv" value="true"/>
+    <param name="camera_id" value="0"/>
+
+    <param name="camera_info_url" value="package://raspicam_node/camera_info/camerav2_410x308.yaml"/>
+    <param name="camera_name" value="camera"/>
+    <param name="width" value="410"/>
+    <param name="height" value="308"/>
+
+    <param name="framerate" value="30"/>
+    <param name="exposure_mode" value="antishake"/>
+    <param name="shutter_speed" value="0"/>
+  </node>
+
+  <node ns="tof" name="mappydot_plus_node" pkg="tof_mappydot_plus" type="mappydot_plus_node" respawn="true" respawn_delay="2">
+      <rosparam>
+        frame_id: tof
+        device: /dev/i2c-1
+        address: [8, 9, 10, 11, 12, 13]
+        rate: 20
+        x: [0.0, -0.0114748, -0.0114748, 0.0, 0.0114748, 0.0114748]
+        y: [0.01325, 0.0066250, -0.006625, -0.01325, -0.006625, 0.006625]
+        z: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        yaw: [1.57079633, 2.61799388, 3.66519143, 4.71238898, 5.75958653, 0.52359877 ]
+      </rosparam>
+  </node>
+</launch>

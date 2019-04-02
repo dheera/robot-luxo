@@ -1,0 +1,13 @@
+[Unit]
+Description=Robot Service
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=pi
+ExecStart=/bin/bash -c "cd /home/pi && source /home/pi/ros_catkin_ws/build/opt/ros/kinetic/setup.bash && source /home/pi/rosbots_catkin_ws/devel/setup.bash && roslaunch /etc/robot.launch"
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

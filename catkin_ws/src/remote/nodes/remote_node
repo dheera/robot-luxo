@@ -1,0 +1,106 @@
+#!/usr/bin/env node
+"use strict";
+
+const sshpk = require('sshpk');
+const fs = require('fs');
+const os = require('os');
+const io = require('socket.io-client');
+const ros = require('rosnodejs');
+const geometry_msgs = ros.require('geometry_msgs');
+
+const remoteConfig = {
+  "name": "ganymede",
+  "ui": {
+    "fixed": [
+       {
+         "type": "stick",
+         "id": "stick0",
+         "aspectRatio": 1.0,
+       }
+    ]
+  }
+}
+
+// ssh
+
+let publicKeyText = fs.readFileSync(os.homedir() + '/.ssh/id_rsa.pub');
+let privateKeyText = fs.readFileSync(os.homedir() + '/.ssh/id_rsa');
+let publicKey = sshpk.parseKey(publicKeyText, 'ssh');
+let privateKey = sshpk.parsePrivateKey(privateKeyText, 'ssh');
+
+// ros init
+
+let nh = null;
+let sub_rosout = null;
+let pub_motion = null;
+
+ros.initNode('remote_node').then(() => {
+  ros.log.info("initialized")
+  nh = ros.nh;
+
+  sub_rosout = nh.subscribe('/rosout_agg', 'rosgraph_msgs/Log', (msg) => {
+    if(msg.level < 3) return;
+    socket.emit('rosout', {
+      level: msg.level,
+      name: msg.name,
+      msg: msg.msg,
+    });
+  });
+
+  pub_motion = nh.advertise('/motion/level2', 'geometry_msgs/Twist')
+
+});
+
+// socket.io
+
+var socket = io('https://robot.dheera.net/robot');
+
+socket.on('connect', () => {
+  ros.log.info('connecting');
+  socket.emit('auth_fingerprint', publicKey.fingerprint().toString());
+});
+
+socket.on('auth_verify', (msg, callback) => {
+  ros.log.info('verifying')
+  if(!msg.data) {
+    console.log('did not receive data to sign');
+    return;
+  }
+
+  let s = privateKey.createSign('sha256');
+  s.update(msg.data);
+  let signature = s.sign();
+  callback({signature: signature.toString(), type: signature.type});
+});
+
+socket.on('e', (data) => {
+  console.log('e', data);
+  if(data[0] === "stick0") onStick(data[1]);
+});
+
+socket.on('auth_status', (status) => {
+  if(status !==1 ) {
+    ros.log.warn("authentication failed");
+    process.exit();
+  }
+  ros.log.info("authentication success");
+  socket.emit('remote_config', remoteConfig);
+});
+
+socket.on('disconnect', () => {
+  console.log('disconnected');
+  process.exit();
+});
+
+function onStick(pos) {
+  if(pos.length !== 2) return;
+  if(!(typeof(pos[0]) === "number")) return;
+  if(!(typeof(pos[1]) === "number")) return;
+
+  let t = new geometry_msgs.msg.Twist();
+  let x = pos[0];
+  let y = pos[1];
+  t.linear.x = -y/5;
+  t.angular.z = -x;
+  pub_motion.publish(t);
+}
