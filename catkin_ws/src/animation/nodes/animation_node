@@ -68,7 +68,7 @@ class AnimationNode(object):
                 else:
                     sprite["ease_fn"] = ease_linear
                 animation.append(sprite)
-                self.animation_queue.append(animation)
+            self.animation_queue.append(animation)
 
     def set(self, name, value):
         if name not in self.channels:
@@ -106,12 +106,13 @@ class AnimationNode(object):
             for sprite in self.current_animation:
                 if t > self.current_animation_start + sprite['end_time']:
                     #self.set(sprite["name"], sprite["end_value"])
+                    pass
                 elif t < self.current_animation_start + sprite['start_time']:
                     animation_active = True
                     #self.set(sprite["name"], sprite["start_value"])
                 else:
                     animation_active = True
-                    fraction = (t - self.current_animation_start + sprite["start_time"]) / (sprite["end_time"] - sprite["start_time"])
+                    fraction = (t - self.current_animation_start - sprite["start_time"]) / (sprite["end_time"] - sprite["start_time"])
                     value = sprite["ease_fn"](fraction) * (sprite["end_value"] - sprite["start_value"]) + sprite["start_value"]
                     self.set(sprite["name"], value)
 
