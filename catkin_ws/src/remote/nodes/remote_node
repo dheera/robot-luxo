@@ -13,43 +13,43 @@ const std_msgs = ros.require('std_msgs');
 const geometry_msgs = ros.require('geometry_msgs');
 
 const remoteConfig = {
-  "name": "luxo",
+  "name": os.hostname(),
   "ui": {
-    "fixed": [
+    "widgets": [
        {
          "type": "slider",
          "id": "slider0",
-         "min": 0,
-         "max": 65535,
-         "value": 32767,
+         "min": 2800,
+         "max": 7600,
+         "value": 5200,
        },
        {
          "type": "slider",
          "id": "slider1",
-         "min": 0,
-         "max": 65535,
-         "value": 32767,
+         "min": 2800,
+         "max": 7600,
+         "value": 5200,
        },
        {
          "type": "slider",
          "id": "slider2",
-         "min": 0,
-         "max": 65535,
-         "value": 32767,
+         "min": 2800,
+         "max": 7600,
+         "value": 5200,
        },
        {
          "type": "slider",
          "id": "slider3",
-         "min": 0,
-         "max": 65535,
-         "value": 32767,
+         "min": 2800,
+         "max": 7600,
+         "value": 5200,
        },
        {
          "type": "slider",
          "id": "slider4",
-         "min": 0,
-         "max": 65535,
-         "value": 32767,
+         "min": 2800,
+         "max": 7600,
+         "value": 5200,
        },
     ]
   }
@@ -112,6 +112,26 @@ socket.on(DATA_IN, (data) => {
   if(data[0] === 'slider0' && data[1] === 'v') {
     let m = new std_msgs.msg.Int32MultiArray();
     m.data = [ data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+    pub_command.publish(m);
+  }
+  if(data[0] === 'slider1' && data[1] === 'v') {
+    let m = new std_msgs.msg.Int32MultiArray();
+    m.data = [ -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+    pub_command.publish(m);
+  }
+  if(data[0] === 'slider2' && data[1] === 'v') {
+    let m = new std_msgs.msg.Int32MultiArray();
+    m.data = [ -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+    pub_command.publish(m);
+  }
+  if(data[0] === 'slider3' && data[1] === 'v') {
+    let m = new std_msgs.msg.Int32MultiArray();
+    m.data = [ -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+    pub_command.publish(m);
+  }
+  if(data[0] === 'slider4' && data[1] === 'v') {
+    let m = new std_msgs.msg.Int32MultiArray();
+    m.data = [ -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
     pub_command.publish(m);
   }
 });
