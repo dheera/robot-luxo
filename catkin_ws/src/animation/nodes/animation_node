@@ -41,6 +41,8 @@ class AnimationNode(object):
             "neck": [3, 3000, 7000],
         }
 
+        self.command_values = [-1] * 16
+
     def on_animation(self, msg):
         try:
             animations = json.loads(msg.data)
@@ -75,12 +77,14 @@ class AnimationNode(object):
             rospy.logwarn("cannot find channel: %s" % name)
             return
         
-        command_values = [-1] * 16
         realvalue = value * (self.channels[name][2] - self.channels[name][1]) + self.channels[name][1]
-        command_values[self.channels[name][0]] = int(realvalue)
+        self.command_values[self.channels[name][0]] = int(realvalue)
+
+    def publish(self):
         m = Int32MultiArray()
-        m.data = command_values
+        m.data = self.command_values
         self.pub_command.publish(m)
+        self.command_values = [-1] * 16
 
     def spin(self):
         rate = rospy.Rate(25)
@@ -118,6 +122,8 @@ class AnimationNode(object):
 
             if not animation_active:
                 self.current_animation = None
+
+            self.publish()
 
         print("shutdown")
 
