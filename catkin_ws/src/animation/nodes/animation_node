@@ -5,6 +5,23 @@ import rospy
 import time
 from std_msgs.msg import *
 
+def ease_linear(x):
+    return x
+
+def ease_in_quad(x):
+    return x*x
+
+def ease_out_quad(x):
+    m = x - 1
+    return 1 - m*m
+
+def ease_inout_quad(x):
+    m = x - 1
+    t = x * 2
+    if t < 1:
+        return x*t
+    return 1 - m*m
+
 class AnimationNode(object):
     def __init__(self):
         rospy.init_node('animation_node')
@@ -39,7 +56,17 @@ class AnimationNode(object):
                 sprite["end_time"] = float(sprite.get("end_time", 1.0))
                 sprite["start_value"] = float(sprite.get("start_value", 0.5))
                 sprite["end_value"] = float(sprite.get("end_value", 0.5))
-                sprite["easing"] = sprite.get("easing", "linear")
+                ease = sprite.get("ease", "linear")
+                if ease == "linear":
+                    sprite["ease_fn"] = ease_linear
+                elif ease == "in_quad":
+                    sprite["ease_fn"] = ease_in_quad
+                elif ease == "out_quad":
+                    sprite["ease_fn"] = ease_out_quad
+                elif ease == "inout_quad":
+                    sprite["ease_fn"] = ease_inout_quad
+                else:
+                    sprite["ease_fn"] = ease_linear
                 animation.append(sprite)
                 self.animation_queue.append(animation)
 
@@ -62,8 +89,9 @@ class AnimationNode(object):
             t = time.time()
 
             m = String()
-            m.data = json.dumps(self.animation_queue)
+            m.data = str(self.animation_queue)
             self.pub_queue.publish(m)
+            summary = ""
 
             if self.current_animation is None and len(self.animation_queue) > 0:
                 self.current_animation = self.animation_queue.pop(0)
@@ -83,7 +111,7 @@ class AnimationNode(object):
                 else:
                     animation_active = True
                     fraction = (t - self.current_animation_start + sprite["start_time"]) / (sprite["end_time"] - sprite["start_time"])
-                    value = fraction * (sprite["end_value"] - sprite["start_value"]) + sprite["start_value"]
+                    value = sprite["ease_fn"](fraction) * (sprite["end_value"] - sprite["start_value"]) + sprite["start_value"]
                     self.set(sprite["name"], value)
 
             if not animation_active:
