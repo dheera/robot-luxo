@@ -33,12 +33,12 @@ class AnimationNode(object):
         self.current_animation = None
         self.current_animation_start = 0
 
-        self.channel_mapping = {
-            "base": 0,
-            "ankle": 1,
-            "ass": 2,
-            "head": 4,
-            "neck": 3,
+        self.channels = {
+            "base": [0, 3000, 7000],
+            "ankle": [1, 3000, 7000],
+            "ass": [2, 3000, 7000],
+            "head": [4, 3000, 7000],
+            "neck": [3, 3000, 7000],
         }
 
     def on_animation(self, msg):
@@ -71,12 +71,13 @@ class AnimationNode(object):
                 self.animation_queue.append(animation)
 
     def set(self, name, value):
-        if name not in self.channel_mapping:
+        if name not in self.channels:
             rospy.logwarn("cannot find channel: %s" % name)
             return
         
         command_values = [-1] * 16
-        command_values[self.channel_mapping[name]] = int(value)
+        realvalue = value * (self.channels[name][2] - self.channels[name][1]) + self.channels[name][1]
+        command_values[self.channels[name][0]] = int(realvalue)
         m = Int32MultiArray()
         m.data = command_values
         self.pub_command.publish(m)
