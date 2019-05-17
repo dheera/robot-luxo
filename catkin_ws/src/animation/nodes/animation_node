@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+
+import json
+import rospy
+import time
+from std_msgs.msg import *
+
+class AnimationNode(object):
+    def __init__(self):
+        rospy.init_node('animation_node')
+        self.pub_command = rospy.Publisher("command", Int32MultiArray, queue_size = 1)
+        self.pub_queue = rospy.Publisher("animation_queue", String, queue_size = 1)
+        self.sub_animation = rospy.Subscriber("animation", String, self.on_animation)
+
+        self.animation_queue = []
+        self.current_animation = None
+        self.current_animation_start = 0
+
+        self.channel_mapping = {
+            "base": 0,
+            "ankle": 1,
+            "ass": 2,
+            "head": 4,
+            "neck": 3,
+        }
+
+    def on_animation(self, msg):
+        try:
+            animations = json.loads(msg.data)
+        except:
+            rospy.logwarn("JSON decode error")
+            return
+
+        for sprites in animations:
+            animation = []
+            for sprite in sprites:
+                sprite["name"] = sprite.get("name", "")
+                sprite["start_time"] = float(sprite.get("start_time", 0.0))
+                sprite["end_time"] = float(sprite.get("end_time", 1.0))
+                sprite["start_value"] = float(sprite.get("start_value", 0.5))
+                sprite["end_value"] = float(sprite.get("end_value", 0.5))
+                sprite["easing"] = sprite.get("easing", "linear")
+                animation.append(sprite)
+                self.animation_queue.append(animation)
+
+    def set(self, name, value):
+        if name not in self.channel_mapping:
+            rospy.logwarn("cannot find channel: %s" % name)
+            return
+        
+        command_values = [-1] * 16
+        command_values[self.channel_mapping[name]] = int(value)
+        m = Int32MultiArray()
+        m.data = command_values
+        self.pub_command.publish(m)
+
+    def spin(self):
+        rate = rospy.Rate(25)
+
+        while not rospy.is_shutdown():
+            rate.sleep()
+            t = time.time()
+
+            m = String()
+            m.data = json.dumps(self.animation_queue)
+            self.pub_queue.publish(m)
+
+            if self.current_animation is None and len(self.animation_queue) > 0:
+                self.current_animation = self.animation_queue.pop(0)
+                self.current_animation_start = t
+
+            if self.current_animation is None:
+                continue
+
+            animation_active = False
+    
+            for sprite in self.current_animation:
+                if t > self.current_animation_start + sprite['end_time']:
+                    self.set(sprite["name"], sprite["end_value"])
+                elif t < self.current_animation_start + sprite['start_time']:
+                    animation_active = True
+                    self.set(sprite["name"], sprite["start_value"])
+                else:
+                    animation_active = True
+                    fraction = (t - self.current_animation_start + sprite["start_time"]) / (sprite["end_time"] - sprite["start_time"])
+                    value = fraction * (sprite["end_value"] - sprite["start_value"]) + sprite["start_value"]
+                    self.set(sprite["name"], value)
+
+            if not animation_active:
+                self.current_animation = None
+
+        print("shutdown")
+
+if __name__ == "__main__":
+    node = AnimationNode()
+    node.spin()
+
