@@ -34,11 +34,11 @@ class AnimationNode(object):
         self.current_animation_start = 0
 
         self.channels = {
-            "base": [0, 3000, 7000],
-            "ankle": [1, 3000, 7000],
-            "ass": [2, 3000, 7000],
-            "head": [4, 3000, 7000],
-            "neck": [3, 3000, 7000],
+            "base": [6, 3000, 7400],
+            "ankle": [7, 3000, 7400],
+            "ass": [8, 3000, 7400],
+            "head": [9, 3000, 7400],
+            "neck": [10, 3000, 7400],
         }
 
         self.command_values = [-1] * 16
