@@ -14,8 +14,10 @@ See .stl files in design/
 
 #### Mechanical parts
 
-* [Heat-set Inserts](https://www.mcmaster.com/94180a331), M3, OD=5.6mm, L=3.8mm ([Alternative](https://www.amazon.com/gp/product/B077CJV3Z9/))
-* [Bearing](https://www.mcmaster.com/7804k106), ID=5mm, OD=10mm, L=4mm ([Alternative](https://www.amazon.com/gp/product/B00UW7SFU8/))
+* Lots x [Heat-set Inserts](https://www.mcmaster.com/94180a331), M3, OD=5.6mm, L=3.8mm ([Alternative](https://www.amazon.com/gp/product/B077CJV3Z9/))
+* Lots x [Bearing](https://www.mcmaster.com/7804k106), ID=5mm, OD=10mm, L=4mm ([Alternative](https://www.amazon.com/gp/product/B00UW7SFU8/))
+* 1 x [Needle-Roller Thrust Bearing](https://www.mcmaster.com/5909k16)
+* 2 x [Washer](https://www.mcmaster.com/5909k76)
 * [Button Hex Head Drive Screw](https://www.mcmaster.com/92095A222), M5, L=40mm, partially threaded
 * [Button Hex Head Drive Screw](https://www.mcmaster.com/92095A228), M5, L=50mm, partially threaded
 * [Button Hex Head Drive Screw](https://www.mcmaster.com/92095a225), M5, L=60mm, partially threaded
