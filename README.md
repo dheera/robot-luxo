@@ -1,6 +1,6 @@
 # robot-luxo
 
-Rendition of Pixar's Luxo Jr. with servo mounts, an IMU, and a Raspberry Pi. Using to explore reinforcement learning. Work in progress. This repo heavily under construction.
+Rendition of Pixar's Luxo Jr. with servo mounts, an IMU, and a Raspberry Pi. Using to explore reinforcement learning. The intent is for it to actually jump and move around. Work in progress. This repo heavily under construction.
 
 ![Picture](https://raw.githubusercontent.com/dheera/robot-luxo/master/picture.jpg "Picture")
 
@@ -26,3 +26,4 @@ See .stl files in design/
 * 1 x [Savox SH-0262MG](https://www.amazon.com/gp/product/B004IZSI9S/) for the head
 * 4 x [Savox SC-1251MG](https://www.amazon.com/gp/product/B004K3FAJE/) for the rest of the joints
 
+## Code
