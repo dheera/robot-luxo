@@ -22,6 +22,7 @@ See .stl files in design/
 * [Button Hex Head Drive Screw](https://www.mcmaster.com/92095A228), M5, L=50mm, partially threaded
 * [Button Hex Head Drive Screw](https://www.mcmaster.com/92095a225), M5, L=60mm, partially threaded
 * [Nylon-Insert Locknut](https://www.mcmaster.com/90576a104), M5
+* Half of [50mm christmas ornament](https://www.amazon.com/gp/product/B01GFW8H6U/) for bulb
 
 #### Servos
 
