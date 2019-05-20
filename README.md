@@ -2,7 +2,7 @@
 
 Rendition of Pixar's Luxo Jr. with servo mounts, an IMU, and a Raspberry Pi. Using to explore reinforcement learning. The intent is for it to actually jump and move around. Work in progress. This repo heavily under construction.
 
-![Picture](https://raw.githubusercontent.com/dheera/robot-luxo/master/picture.jpg "Picture")
+![video](/video.gif?raw=true "video")
 
 ## Assembly
 
