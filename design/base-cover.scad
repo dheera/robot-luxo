@@ -3,7 +3,27 @@ H=32+1.5;
 D=185;
 fn=512;
 
+translate([0,-5,0])
 difference() {
+    
+cover();
+scale([1,1,1])
+translate([-100,0,0])
+cube([200,200,200]);
+
+}
+
+translate([0,5,0])
+difference() {
+    
+cover();
+scale([1,-1,1])
+translate([-100,0,0])
+cube([200,200,200]);
+
+}
+
+module cover() {
 union() {
     
 difference() {
@@ -79,11 +99,9 @@ rotate([0,0,-90])
     lidmount2();
 }
 
-scale([1,-1,1])
-translate([-100,0,0])
-cube([200,200,200]);
-
 }
+
+
 
 module lidmount2() {
     difference() {
