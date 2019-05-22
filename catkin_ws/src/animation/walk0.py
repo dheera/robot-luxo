@@ -11,8 +11,7 @@ rospy.init_node("animation_test")
 
 animation = [
 #        {"name": "base", "start_time": 0.0, "end_time": 2.0, "start_value": 0.3, "end_value": 0.6, "ease": "inout_quad"},
-        {"name": "base", "start_time": 0.0, "end_time": 0.5, "start_value": 0.5, "end_value": 0.5, "ease": "inout_quad"},
-        {"name": "head", "start_time": 0.0, "end_time": 0.5, "start_value": 0.5, "end_value": 0.5, "ease": "inout_quad"},
+#        {"name": "base", "start_time": 2.0, "end_time": 4.0, "start_value": 0.6, "end_value": 0.3, "ease": "inout_quad"},
         {"name": "ankle", "start_time": 0.0, "end_time": 0.5, "start_value": 0.2, "end_value": 0.2, "ease": "inout_quad"},
         {"name": "ankle", "start_time": 1.0, "end_time": 1.1, "start_value": 0.2, "end_value": 0.9, "ease": "inout_quad"},
         {"name": "ankle", "start_time": 1.3, "end_time": 1.4, "start_value": 0.9, "end_value": 0.2, "ease": "inout_quad"},
@@ -20,6 +19,8 @@ animation = [
         {"name": "ass", "start_time": 1.0, "end_time": 1.2, "start_value": 0.7, "end_value": 0.2, "ease": "inout_quad"},
         {"name": "ass", "start_time": 1.2, "end_time": 1.4, "start_value": 0.2, "end_value": 0.7, "ease": "inout_quad"},
         {"name": "neck", "start_time": 0.0, "end_time": 0.5, "start_value": 0.2, "end_value": 0.2, "ease": "inout_quad"},
+        {"name": "head", "start_time": 0.0, "end_time": 0.5, "start_value": 0.5, "end_value": 0.5, "ease": "inout_quad"},
+        {"name": "base", "start_time": 0.0, "end_time": 0.5, "start_value": 0.5, "end_value": 0.5, "ease": "inout_quad"},
 #        {"name": "neck", "start_time": 0.0, "end_time": 1.0, "start_value": 0.7, "end_value": 0.2, "ease": "inout_quad"},
 #        {"name": "head", "start_time": 0.0, "end_time": 0.25, "start_value": 0.7, "end_value": 0.3, "ease": "inout_quad"},
 #        {"name": "head", "start_time": 0.25, "end_time": 0.50, "start_value": 0.3, "end_value": 0.7, "ease": "inout_quad"},
