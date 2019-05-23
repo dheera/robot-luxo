@@ -38,9 +38,7 @@ class ObjectDetectHaarNode(object):
             detections = self.cascade.detectMultiScale(gray, 1.2, 5)
 
             m = String()
-            detections_v = []
-            for (x,y,w,h) in detections:
-                detections_v.append([x,y,w,h])
+            detections_v = [[x,y,w,h] for (x,y,w,h) in detections]
             m.data = json.dumps(detections_v)
             self.pub_detections.publish(m)
     
