@@ -7,3 +7,6 @@
 [submodule "catkin_ws/src/ros-system-stats"]
 	path = catkin_ws/src/ros-system-stats
 	url = git@github.com:/dheera/ros-system-stats
+[submodule "catkin_ws/src/ros-object-detection-haar"]
+	path = catkin_ws/src/ros-object-detection-haar
+	url = git@github.com:/dheera/ros-object-detection-haar
