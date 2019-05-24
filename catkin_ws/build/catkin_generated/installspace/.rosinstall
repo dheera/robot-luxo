@@ -1,2 +1,0 @@
-- setup-file:
-    local-name: /home/pi/ros_catkin_ws/build/opt/ros/kinetic/setup.sh

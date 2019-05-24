@@ -1,8 +1,0 @@
-prefix=/home/pi/ros_catkin_ws/build/opt/ros/kinetic
-
-Name: motion_controller
-Description: Description of motion_controller
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/pi/ros_catkin_ws/build/opt/ros/kinetic/lib 
-Requires: 

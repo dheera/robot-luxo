@@ -1,8 +1,0 @@
-prefix=/home/pi/ros_catkin_ws/build/opt/ros/kinetic
-
-Name: system_stats
-Description: Description of system_stats
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/pi/ros_catkin_ws/build/opt/ros/kinetic/lib 
-Requires: 

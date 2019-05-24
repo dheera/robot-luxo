@@ -1,8 +1,0 @@
-prefix=/home/pi/catkin_ws/devel
-
-Name: imu_bno055
-Description: Description of imu_bno055
-Version: 1.0.0
-Cflags: -I/home/pi/catkin_ws/src/ros-imu-bno055/imu_bno055/include
-Libs: -L/home/pi/catkin_ws/devel/lib 
-Requires: 

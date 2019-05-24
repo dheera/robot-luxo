@@ -1,2 +1,0 @@
-motion_controller:remote:ros-imu-bno055/imu_bno055:ros-pwm-pca9685/pwm_pca9685:ros-system-stats/system_stats
--DCATKIN_DEVEL_PREFIX=/home/pi/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/pi/ros_catkin_ws/build/opt/ros/kinetic -G Unix Makefiles

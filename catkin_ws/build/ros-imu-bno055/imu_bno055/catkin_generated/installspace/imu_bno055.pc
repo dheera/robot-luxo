@@ -1,8 +1,0 @@
-prefix=/home/pi/ros_catkin_ws/build/opt/ros/kinetic
-
-Name: imu_bno055
-Description: Description of imu_bno055
-Version: 1.0.0
-Cflags: -I/home/pi/ros_catkin_ws/build/opt/ros/kinetic/include
-Libs: -L/home/pi/ros_catkin_ws/build/opt/ros/kinetic/lib 
-Requires: 
