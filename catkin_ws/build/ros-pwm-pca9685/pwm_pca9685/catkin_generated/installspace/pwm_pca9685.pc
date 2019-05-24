@@ -1,0 +1,8 @@
+prefix=/home/pi/ros_catkin_ws/build/opt/ros/kinetic
+
+Name: pwm_pca9685
+Description: Description of pwm_pca9685
+Version: 1.0.0
+Cflags: -I/home/pi/ros_catkin_ws/build/opt/ros/kinetic/include
+Libs: -L/home/pi/ros_catkin_ws/build/opt/ros/kinetic/lib 
+Requires: 

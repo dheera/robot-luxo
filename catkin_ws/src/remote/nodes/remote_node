@@ -111,27 +111,27 @@ socket.on(DATA_IN, (data) => {
   console.log('DATA_IN', data);
   if(data[0] === 'slider0' && data[1] === 'v') {
     let m = new std_msgs.msg.Int32MultiArray();
-    m.data = [ data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+    m.data = [ -1, -1, -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
     pub_command.publish(m);
   }
   if(data[0] === 'slider1' && data[1] === 'v') {
     let m = new std_msgs.msg.Int32MultiArray();
-    m.data = [ -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+    m.data = [ -1, -1, -1, -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1 ];
     pub_command.publish(m);
   }
   if(data[0] === 'slider2' && data[1] === 'v') {
     let m = new std_msgs.msg.Int32MultiArray();
-    m.data = [ -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+    m.data = [ -1, -1, -1, -1, -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1 ];
     pub_command.publish(m);
   }
   if(data[0] === 'slider3' && data[1] === 'v') {
     let m = new std_msgs.msg.Int32MultiArray();
-    m.data = [ -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+    m.data = [ -1, -1, -1, -1, -1, -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1 ];
     pub_command.publish(m);
   }
   if(data[0] === 'slider4' && data[1] === 'v') {
     let m = new std_msgs.msg.Int32MultiArray();
-    m.data = [ -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+    m.data = [ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1 ];
     pub_command.publish(m);
   }
 });

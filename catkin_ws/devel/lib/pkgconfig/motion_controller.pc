@@ -1,0 +1,8 @@
+prefix=/home/pi/catkin_ws/devel
+
+Name: motion_controller
+Description: Description of motion_controller
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/pi/catkin_ws/devel/lib 
+Requires: 

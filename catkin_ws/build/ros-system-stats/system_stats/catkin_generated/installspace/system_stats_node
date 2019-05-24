@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+
+import json
+import socket
+import psutil
+import rospy
+import re
+import sys
+import time
+import subprocess
+
+from std_msgs.msg import String
+
+def mean(list):
+    return sum(list)/len(list)
+
+if __name__ == "__main__":
+    rospy.init_node("status_system_node")
+
+    param_report_gpu = rospy.get_param("~report_gpu", False)
+    pub_psutil = rospy.Publisher("stats", String, queue_size = 1)
+
+    p = psutil.Process()
+
+    rate = rospy.Rate(0.2)
+    while not rospy.is_shutdown():
+        rate.sleep()
+
+        status = {"cpu":{}, "net":{}, "mem":{}, "disk": {}}
+        if param_report_gpu:
+             status["gpu"] = {}
+
+        with p.oneshot():
+            sensors_temperatures = psutil.sensors_temperatures()
+            if 'coretemp' in sensors_temperatures:
+                status['cpu']['temp'] = mean(list(map(lambda x:x.current, sensors_temperatures['coretemp'])))
+            status['cpu']['percent'] = mean(psutil.cpu_percent(percpu=True))
+            status['disk']['percent'] = psutil.disk_usage('/').percent
+            status['net']['bytes_sent'] = psutil.net_io_counters().bytes_sent
+            status['net']['bytes_recv'] = psutil.net_io_counters().bytes_recv
+            net_if_addrs = psutil.net_if_addrs()
+            for k in net_if_addrs:
+                net_if_addrs[k] = list(filter(lambda x: x.family == socket.AF_INET, net_if_addrs[k]))
+                net_if_addrs[k] = list(map(lambda x: x.address, net_if_addrs[k]))
+            status['net']['if_addrs'] = net_if_addrs
+            status['mem']['virtual_percent'] = psutil.virtual_memory().percent
+            status['mem']['swap_percent'] = psutil.swap_memory().percent
+
+        if param_report_gpu:
+            nvinfo =  subprocess.Popen(['nvidia-smi', '-q', '-x'], stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+
+            try:
+                for line in nvinfo[0].decode().split('\n'):
+                    if '<gpu_temp>' in line and ' C' in line:
+                        status['gpu']['temp'] = float(re.search('<gpu_temp>(.*) C</gpu_temp>', line).group(1))
+                    if '<power_draw>' in line and ' W' in line:
+                        status['gpu']['power_draw'] = float(re.search('<power_draw>(.*) W</power_draw>', line).group(1))
+                    if '<power_state>' in line:
+                        status['gpu']['power_state'] = re.search('<power_state>(.*)</power_state>', line).group(1)
+            except (AttributeError, ValueError) as e:
+                rospy.logwarn("error updating gpu statistics")
+                status['gpu']['temp'] = -1
+                status['gpu']['power_draw'] = -1
+                status['gpu']['power_state'] = -1
+
+        pub_psutil.publish(json.dumps(status))

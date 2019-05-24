@@ -1,0 +1,8 @@
+prefix=/home/pi/catkin_ws/devel
+
+Name: pwm_pca9685
+Description: Description of pwm_pca9685
+Version: 1.0.0
+Cflags: -I/home/pi/catkin_ws/src/ros-pwm-pca9685/pwm_pca9685/include
+Libs: -L/home/pi/catkin_ws/devel/lib 
+Requires: 

@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+
+import numpy as np
+import rospy
+import time
+
+from geometry_msgs.msg import Twist
+from std_msgs.msg import Int32MultiArray, Int32, Float32
+
+def on_motion_level(msg, level):
+    on_motion_level.last_command_times[level] = time.time()
+    on_motion_level.last_commands[level] = msg
+on_motion_level.last_command_times = [0.0] * 5
+on_motion_level.last_commands = [Twist()] * 5
+
+def on_multiplier(msg):
+    on_multiplier.last_multiplier_time = time.time()
+    on_multiplier.last_multiplier = np.clip(msg.data, 0.0, 1.0)
+on_multiplier.last_multiplier = 1.0
+on_multiplier.last_multiplier_time = 0.0
+
+def relax_motors():
+    global pub_pwm_command, MOTOR_MAPPING, PWM_MAPPING
+
+    msg = Int32MultiArray()
+    msg.data = [-1] * 16
+    msg.data[PWM_MAPPING[MOTOR_LEFT][0]] = 0
+    msg.data[PWM_MAPPING[MOTOR_LEFT][1]] = 0
+    msg.data[PWM_MAPPING[MOTOR_LEFT][2]] = 0
+    msg.data[PWM_MAPPING[MOTOR_RIGHT][0]] = 0
+    msg.data[PWM_MAPPING[MOTOR_RIGHT][1]] = 0
+    msg.data[PWM_MAPPING[MOTOR_RIGHT][2]] = 0
+    pub_pwm_command.publish(msg)
+
+def set_motors(motor_left_power, motor_right_power):
+    global pub_pwm_command, MOTOR_MAPPING, PWM_MAPPING
+
+    msg = Int32MultiArray()
+    msg.data = [-1] * 16
+
+    msg.data[PWM_MAPPING[MOTOR_LEFT][0]] = abs(int(motor_left_power))
+    msg.data[PWM_MAPPING[MOTOR_RIGHT][0]] = abs(int(motor_right_power))
+
+    if motor_left_power >= 0:
+        msg.data[PWM_MAPPING[MOTOR_LEFT][1]] = 65535
+        msg.data[PWM_MAPPING[MOTOR_LEFT][2]] = 0
+    elif motor_left_power < 0:
+        msg.data[PWM_MAPPING[MOTOR_LEFT][1]] = 0
+        msg.data[PWM_MAPPING[MOTOR_LEFT][2]] = 65535
+    if motor_right_power >= 0:
+        msg.data[PWM_MAPPING[MOTOR_RIGHT][1]] = 65535
+        msg.data[PWM_MAPPING[MOTOR_RIGHT][2]] = 0
+    elif motor_right_power < 0:
+        msg.data[PWM_MAPPING[MOTOR_RIGHT][1]] = 0
+        msg.data[PWM_MAPPING[MOTOR_RIGHT][2]] = 65535
+
+    pub_pwm_command.publish(msg)
+    
+if __name__ == "__main__":
+    rospy.init_node("motion_controller_node")
+    rospy.loginfo("initializing")
+
+    WHEEL_DISTANCE_Y = rospy.get_param("~wheel_distance_y", 0.10)
+    WHEEL_RADIUS = rospy.get_param("~wheel_radius", 0.02)
+    TICKS_PER_REVOLUTION = rospy.get_param("~ticks_per_revolution", 100000)
+    RATE = rospy.get_param("~rate", 30)
+    
+    VELOCITY_SCALE = rospy.get_param("~velocity_scale", 0.03) # (command units / (rad/s))
+
+    LIMIT_LINEAR = rospy.get_param("~limit_linear", 0.4)
+    LIMIT_ANGULAR = rospy.get_param("~limit_angular", 3.0)
+    TIMEOUT = rospy.get_param("~timeout", 0.5)
+
+    FLIP_LEFT = rospy.get_param("~flip_left", False)
+    FLIP_RIGHT = rospy.get_param("~flip_right", True)
+
+    MOTOR_LEFT, MOTOR_RIGHT = [int(digit) for digit in rospy.get_param("~motor_mapping", "1,0").split(",")]
+    PWM_MAPPING = [[int(digit) for digit in group.split(",")] \
+            for group in rospy.get_param("~pwm_mapping", "8,9,10 13,11,12 2,3,4 7,5,6").split(" ")]
+
+    OPEN_LOOP_GAIN = rospy.get_param("~open_loop_gain", 2.5) # fraction motor power / (m/s)
+    OPEN_LOOP_POWER_LAW = rospy.get_param("~open_loop_power_law", 0.5)
+    CLOSED_LOOP_GAIN_P = rospy.get_param("~closed_loop_gain_p", 0)
+    CLOSED_LOOP_GAIN_I = rospy.get_param("~closed_loop_gain_i", 0)
+    CLOSED_LOOP_GAIN_D = rospy.get_param("~closed_loop_gain_d", 0)
+
+    # publishers
+
+    pub_motion_output = rospy.Publisher("output", Twist, queue_size = 1)
+    pub_pwm_command = rospy.Publisher("/pwm/command", Int32MultiArray, queue_size = 1)
+
+    # subscribers
+
+    rospy.Subscriber("multiplier", Float32, on_multiplier)
+    for level in range(5):
+        rospy.Subscriber("level%d" % level, Twist, on_motion_level, callback_args = level)
+
+    rate = rospy.Rate(RATE)
+
+    while not rospy.is_shutdown():
+        rate.sleep()
+        t = time.time()
+
+        # compute the "winning" command (highest non-expired level)
+
+        winning_level = None
+
+        for i in reversed(range(5)):
+            if t - on_motion_level.last_command_times[i] < TIMEOUT:
+                winning_level = i
+            else:
+                on_motion_level.last_commands[i].linear.x = 0.0
+                on_motion_level.last_commands[i].angular.z = 0.0
+
+        if not winning_level:
+            relax_motors()
+            continue
+
+        winning_time = on_motion_level.last_command_times[winning_level]
+
+        # motion timeout
+
+        output_command = Twist()
+        output_command.linear.x = on_motion_level.last_commands[winning_level].linear.x
+        output_command.angular.z = on_motion_level.last_commands[winning_level].angular.z
+
+        # impose limits
+
+        output_command.linear.x = np.clip(output_command.linear.x,
+                -LIMIT_LINEAR, LIMIT_LINEAR)
+        output_command.angular.x = np.clip(output_command.angular.x,
+                -LIMIT_ANGULAR, LIMIT_ANGULAR)
+
+        # apply multipliers
+
+        output_command.linear.x *= on_multiplier.last_multiplier
+        output_command.angular.z *= on_multiplier.last_multiplier
+
+        # publish it for debugging purposes
+
+        pub_motion_output.publish(output_command)
+
+        # compute left and right wheel speeds
+
+        motor_left_velocity = output_command.linear.x - output_command.angular.z * WHEEL_DISTANCE_Y / 2
+        motor_right_velocity = output_command.linear.x + output_command.angular.z * WHEEL_DISTANCE_Y / 2
+
+        if OPEN_LOOP_GAIN > 0:
+            motor_left_power = OPEN_LOOP_GAIN * motor_left_velocity
+            motor_right_power = OPEN_LOOP_GAIN * motor_right_velocity
+
+            motor_left_sign = 1 if motor_left_power > 0 else -1
+            motor_left_power = motor_left_sign * (abs(motor_left_power) ** OPEN_LOOP_POWER_LAW)
+            motor_right_sign = 1 if motor_right_power > 0 else -1
+            motor_right_power = motor_right_sign * (abs(motor_right_power) ** OPEN_LOOP_POWER_LAW)
+
+        if FLIP_LEFT:
+            motor_left_power = -motor_left_power
+        if FLIP_RIGHT:
+            motor_right_power = -motor_right_power
+
+        if motor_left_power > 1.0 and motor_right_power > 1.0 and motor_right_power > motor_left_power:
+            motor_left_power = motor_left_power / motor_right_power
+            motor_right_power = 1.0
+        elif motor_left_power > 1.0 and motor_right_power > 1.0 and motor_right_power < motor_left_power:
+            motor_right_power = motor_right_power / motor_left_power
+            motor_left_power = 1.0
+        elif motor_left_power < -1.0 and motor_right_power < -1.0 and motor_right_power < motor_left_power:
+            motor_left_power = -motor_left_power / motor_right_power
+            motor_right_power = -1.0
+        elif motor_left_power < -1.0 and motor_right_power < -1.0 and motor_right_power > motor_left_power:
+            motor_right_power = -motor_right_power / motor_left_power
+            motor_left_power = -1.0
+
+        motor_left_power = int(np.clip(65535 * motor_left_power, -65535, 65535))
+        motor_right_power = int(np.clip(65535 * motor_right_power, -65535, 65535))
+
+        set_motors(motor_left_power, motor_right_power)
+
+    rospy.loginfo("shutdown")

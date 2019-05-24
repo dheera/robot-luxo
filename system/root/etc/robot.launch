@@ -23,6 +23,9 @@
     <param name="cascade" type="string" value="haarcascade_frontalface_alt2.xml"/>
   </node>
 
+  <node ns="light" name="light_node" pkg="light" type="light_node" respawn="true" respawn_delay="2">
+  </node>
+
   <node name="camera" pkg="usb_cam" type="usb_cam_node" output="screen" respawn="true" respawn_delay="2">
     <param name="video_device" value="/dev/video0" />
     <param name="image_width" value="320" />

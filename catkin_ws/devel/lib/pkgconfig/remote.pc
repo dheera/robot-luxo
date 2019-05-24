@@ -1,0 +1,8 @@
+prefix=/home/pi/catkin_ws/devel
+
+Name: remote
+Description: Description of remote
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/pi/catkin_ws/devel/lib 
+Requires: 
