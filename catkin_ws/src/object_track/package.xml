@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>object_detect</name>
+  <name>object_tracking</name>
   <version>0.0.0</version>
   <description>motion</description>
   <maintainer email="dheera@dheera.net">dheera</maintainer>

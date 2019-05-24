@@ -7,8 +7,9 @@ import json
 import os
 import rospy
 import time
+import random
 
-from std_msgs.msg import String
+from std_msgs.msg import String, ColorRGBA
 from sensor_msgs.msg import Image
 
 PATH = os.path.dirname(__file__)
@@ -16,12 +17,14 @@ PATH = os.path.dirname(__file__)
 class ObjectTrackNode(object):
     def __init__(self):
         rospy.init_node('face_track_node')
+        self.last_positive = time.time()
         self.param_kx = rospy.get_param("~kx", 0.1)
         self.param_ky = rospy.get_param("~ky", 0.1)
         self.param_topic_detections = rospy.get_param("~topic_detections", "/camera/detections")
         self.param_topic_animation = rospy.get_param("~topic_animation", "/pwm/animation")
         self.sub_detections = rospy.Subscriber(self.param_topic_detections, String, self.on_detections)
         self.pub_animation = rospy.Publisher(self.param_topic_animation, String, queue_size = 1)
+        self.pub_rgb = rospy.Publisher("/light/rgb", ColorRGBA, queue_size = 1)
         self.request_target = None
         time.sleep(0.1)
         self.head = 0.5
@@ -48,12 +51,24 @@ class ObjectTrackNode(object):
             return
 
         if len(detections) > 0:
+            self.last_positive = time.time()
             x = detections[0][0] + detections[0][2] / 2.0
             y = detections[0][1] + detections[0][3] / 2.0
             ox = x - 0.5
             oy = y - 0.5
             print("move to", ox, oy)
             self.request_target = ox * self.param_kx, oy * self.param_ky
+            m = ColorRGBA()
+            m.r = 0.05
+            m.g = 0.05
+            m.b = 0.05
+            self.pub_rgb.publish(m)
+        elif time.time() - self.last_positive > 2:
+            m = ColorRGBA()
+            m.r = 0.01
+            m.g = 0.00
+            m.b = 0.00
+            self.pub_rgb.publish(m)
 
         self.is_processing = False
 
