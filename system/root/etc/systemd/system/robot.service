@@ -4,8 +4,8 @@ After=syslog.target network.target
 
 [Service]
 Type=simple
-User=root
-ExecStart=/bin/bash -c "cd /home/pi && source /home/pi/ros_catkin_ws/build/opt/ros/kinetic/setup.bash && source /home/pi/rosbots_catkin_ws/devel/setup.bash && roslaunch /etc/robot.launch"
+User=robot
+ExecStart=/bin/bash -c "source /opt/ros/melodic/setup.bash && roslaunch /etc/robot.launch"
 Restart=on-failure
 RestartSec=5
 
