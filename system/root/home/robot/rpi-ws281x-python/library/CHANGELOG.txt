@@ -1,0 +1,44 @@
+4.2.3
+-----
+
+* Fix: Added support for Pi 4 Rev 1.2 - 0xa03112, 0xb03112, 0xc03112
+
+4.2.2
+-----
+
+* Fix: Fixed Slice support when setting pixels
+* New: Added support for Revision 0xa02083
+* New: Added support for Revision 0xa22083
+
+4.2.1
+-----
+
+* Fix: Added white colour channel to Color()
+
+4.2.0
+-----
+
+* New: Added support for Raspberry Pi 4
+
+4.1.0
+-----
+
+* New: Added support for the Pi 3A+
+* Fix: Bugfix for ARM64 support
+
+4.0.0
+-----
+
+* Warning: Removed "neopixel" module from this library, use "rpi_ws281x" instead, see #8
+
+3.1.0
+-----
+
+* New: Exposed all contents of ws for easy access to strip_type constants
+* Fix: Matched functionality of upstream legacy library by supporting strip_type
+* Note: Default strip type is WS2811_STRIP_GRB
+
+3.0.7
+-----
+
+* New: Added support for Pi 3B+
