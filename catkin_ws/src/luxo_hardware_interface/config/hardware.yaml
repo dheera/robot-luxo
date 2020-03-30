@@ -1,0 +1,9 @@
+luxo:
+  hardware_interface:
+    loop_hz: 10
+    joints:
+      - foot
+      - knee
+      - ass
+      - neck
+      - head

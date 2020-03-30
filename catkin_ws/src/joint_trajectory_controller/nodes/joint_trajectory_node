@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+
+import json
+import rospy
+import time
+from std_msgs.msg import *
+
+def ease_linear(x):
+    return x
+
+def ease_in_quad(x):
+    return x*x
+
+def ease_out_quad(x):
+    m = x - 1
+    return 1 - m*m
+
+def ease_inout_quad(x):
+    m = x - 1
+    t = x * 2
+    if t < 1:
+        return x*t
+    return 1 - m*m
+
+class AnimationNode(object):
+    def __init__(self):
+        rospy.init_node('animation_node')
+        self.pub_command = rospy.Publisher("command", Int32MultiArray, queue_size = 1)
+        self.pub_queue = rospy.Publisher("animation_queue", String, queue_size = 1)
+        self.sub_animation = rospy.Subscriber("animation", String, self.on_animation)
+
+        self.animation_queue = []
+        self.current_animation = None
+        self.current_animation_start = 0
+
+        self.channels = {
+            "base": [6, 3000, 7400],
+            "ankle": [7, 3000, 7400],
+            "ass": [8, 3000, 7400],
+            "head": [9, 3000, 7400],
+            "neck": [10, 3000, 7400],
+        }
+
+        self.command_values = [-1] * 16
+
+    def on_animation(self, msg):
+        try:
+            animations = json.loads(msg.data)
+        except:
+            rospy.logwarn("JSON decode error")
+            return
+
+        for sprites in animations:
+            animation = []
+            for sprite in sprites:
+                sprite["name"] = sprite.get("name", "")
+                sprite["start_time"] = float(sprite.get("start_time", 0.0))
+                sprite["end_time"] = float(sprite.get("end_time", 1.0))
+                sprite["start_value"] = float(sprite.get("start_value", 0.5))
+                sprite["end_value"] = float(sprite.get("end_value", 0.5))
+                ease = sprite.get("ease", "linear")
+                if ease == "linear":
+                    sprite["ease_fn"] = ease_linear
+                elif ease == "in_quad":
+                    sprite["ease_fn"] = ease_in_quad
+                elif ease == "out_quad":
+                    sprite["ease_fn"] = ease_out_quad
+                elif ease == "inout_quad":
+                    sprite["ease_fn"] = ease_inout_quad
+                else:
+                    sprite["ease_fn"] = ease_linear
+                animation.append(sprite)
+            self.animation_queue.append(animation)
+
+    def set(self, name, value):
+        if name not in self.channels:
+            rospy.logwarn("cannot find channel: %s" % name)
+            return
+        
+        realvalue = value * (self.channels[name][2] - self.channels[name][1]) + self.channels[name][1]
+        self.command_values[self.channels[name][0]] = int(realvalue)
+
+    def publish(self):
+        m = Int32MultiArray()
+        m.data = self.command_values
+        self.pub_command.publish(m)
+        self.command_values = [-1] * 16
+
+    def spin(self):
+        rate = rospy.Rate(25)
+
+        while not rospy.is_shutdown():
+            rate.sleep()
+            t = time.time()
+
+            m = String()
+            m.data = str(self.animation_queue)
+            self.pub_queue.publish(m)
+            summary = ""
+
+            if self.current_animation is None and len(self.animation_queue) > 0:
+                self.current_animation = self.animation_queue.pop(0)
+                self.current_animation_start = t
+
+            if self.current_animation is None:
+                continue
+
+            animation_active = False
+    
+            for sprite in self.current_animation:
+                if t > self.current_animation_start + sprite['end_time']:
+                    #self.set(sprite["name"], sprite["end_value"])
+                    pass
+                elif t < self.current_animation_start + sprite['start_time']:
+                    animation_active = True
+                    #self.set(sprite["name"], sprite["start_value"])
+                else:
+                    animation_active = True
+                    fraction = (t - self.current_animation_start - sprite["start_time"]) / (sprite["end_time"] - sprite["start_time"])
+                    value = sprite["ease_fn"](fraction) * (sprite["end_value"] - sprite["start_value"]) + sprite["start_value"]
+                    self.set(sprite["name"], value)
+
+            if not animation_active:
+                self.current_animation = None
+
+            self.publish()
+
+        print("shutdown")
+
+if __name__ == "__main__":
+    node = AnimationNode()
+    node.spin()
+
