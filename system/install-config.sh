@@ -1,7 +1,7 @@
 #!/bin/bash
+sudo cp -rv root/* /
 sudo systemctl daemon-reload
 sudo systemctl enable robot
-sudo systemctl disable nvgetty
 
 sudo usermod -aG i2c robot
 sudo usermod -aG dialout robot

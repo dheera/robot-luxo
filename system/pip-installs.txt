@@ -3,7 +3,6 @@ numba
 scipy
 psutil
 pyserial
-pyserial
 pyyaml
 rospkg
 tornado

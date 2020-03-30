@@ -8,3 +8,4 @@ python3-pip
 python-pip
 screen
 vim
+python3-rpi.gpio
