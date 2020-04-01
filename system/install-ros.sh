@@ -11,13 +11,13 @@ sudo apt install \
   ros-melodic-desktop-full \
   ros-melodic-serial \
   ros-melodic-dynamic-reconfigure \
-  ros-melodic-ddynamic-reeconfigure \
+  ros-melodic-ddynamic-reconfigure \
   ros-melodic-joint-limits-interface \
   ros-melodic-transmission-interface \
   ros-melodic-ros-control \
   ros-melodic-joint-state-publisher \
   ros-melodic-joint-state-controller \
-  ros-melodic-joint-trajectory-controller
+  ros-melodic-joint-trajectory-controller \
   ros-melodic-ros-controllers \
   ros-melodic-controller-manager
 
