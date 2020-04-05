@@ -5,7 +5,6 @@ luxo:
         publish_rate: 50
 
       trajectory:
-        trajectory:
           type: position_controllers/JointTrajectoryController
           joints:
               - foot
@@ -14,46 +13,35 @@ luxo:
               - neck
               - head
           gains:
-              foot: { p: 1.0, i: 0.0, d: 0.0, i_clamp: 1.0 }
-              knee: { p: 1.0, i: 0.0, d: 0.0, i_clamp: 1.0 }
-              ass: { p: 1.0, i: 0.0, d: 0.0, i_clamp: 1.0 }
-              neck: { p: 1.0, i: 0.0, d: 0.0, i_clamp: 1.0 }
-              head: { p: 1.0, i: 0.0, d: 0.0, i_clamp: 1.0 }
-          constraints:
-              goal_time: 10.0
-              foot:
-                goal: 0.1
-              knee:
-                goal: 0.1
-              ass:
-                goal: 0.1
-              neck:
-                goal: 0.1
-              head:
-                goal: 0.1
+              foot: { p: 0.1, i: 0.0, d: 0.0, i_clamp: 1.0 }
+              knee: { p: 0.1, i: 0.0, d: 0.0, i_clamp: 1.0 }
+              ass: { p: 0.1, i: 0.0, d: 0.0, i_clamp: 1.0 }
+              neck: { p: 0.1, i: 0.0, d: 0.0, i_clamp: 1.0 }
+              head: { p: 0.1, i: 0.0, d: 0.0, i_clamp: 1.0 }
 
       position:
           foot:
                 type: position_controllers/JointPositionController
                 joint: foot
-                pid: {p: 1.0, i: 0.0, d: 0.0}
+                pid: {p: 0.1, i: 0.0, d: 0.0}
 
           knee:
                 type: position_controllers/JointPositionController
                 joint: knee
-                pid: {p: 1.0, i: 0.0, d: 0.0}
+                pid: {p: 0.1, i: 0.0, d: 0.0}
 
           ass:
                 type: position_controllers/JointPositionController
                 joint: ass
-                pid: {p: 1.0, i: 0.0, d: 0.0}
+                pid: {p: 0.1, i: 0.0, d: 0.0}
 
           neck:
                 type: position_controllers/JointPositionController
                 joint: neck
-                pid: {p: 1.0, i: 0.0, d: 0.0}
+                pid: {p: 0.1, i: 0.0, d: 0.0}
 
           head:
                 type: position_controllers/JointPositionController
                 joint: head
-                pid: {p: 1.0, i: 0.0, d: 0.0}
+                pid: {p: 0.1, i: 0.0, d: 0.0}
+

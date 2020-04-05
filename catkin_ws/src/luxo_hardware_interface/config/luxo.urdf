@@ -1,0 +1,33 @@
+<robot name="luxo">
+  <link name="base_link"/>
+  <link name="foot_link"/>
+  <link name="knee_link"/>
+  <link name="ass_link"/>
+  <link name="neck_link"/>
+  <link name="head_link"/>
+
+  <joint name="foot" type="continuous">
+    <parent link="base_link"/>
+    <child link="foot_link"/>
+  </joint>
+
+  <joint name="knee" type="continuous">
+    <parent link="foot_link"/>
+    <child link="knee_link"/>
+  </joint>
+
+  <joint name="ass" type="continuous">
+    <parent link="knee_link"/>
+    <child link="ass_link"/>
+  </joint>
+
+  <joint name="neck" type="continuous">
+    <parent link="ass_link"/>
+    <child link="neck_link"/>
+  </joint>
+
+  <joint name="head" type="continuous">
+    <parent link="neck_link"/>
+    <child link="head_link"/>
+  </joint>
+</robot>

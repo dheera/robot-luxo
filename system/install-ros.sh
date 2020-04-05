@@ -19,7 +19,8 @@ sudo apt install \
   ros-melodic-joint-state-controller \
   ros-melodic-joint-trajectory-controller \
   ros-melodic-ros-controllers \
-  ros-melodic-controller-manager
+  ros-melodic-controller-manager \
+  liburdfdom-tools
 
 sudo rosdep init
 rosdep update
