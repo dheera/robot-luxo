@@ -2,11 +2,10 @@ htop
 i2c-tools
 libi2c-dev
 libogg-dev
-libraspberrypi-dev
 libtheora-dev
 libvorbis-dev
-npm
 python3-pip
 python-pip
 screen
 vim
+python3-rpi.gpio
