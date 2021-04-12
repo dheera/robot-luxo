@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+
+import rospy
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from sensor_msgs.msg import JointState
+from geometry_msgs.msg import Twist
+
+joint_states = {}
+def on_joint_states(msg):
+  global joint_states
+  for i, name in enumerate(msg.name):
+    joint_states[name] = msg.position[i]
+
+def on_cmd_vel(msg):
+  if len(joint_states.keys()) < 5:
+    return
+
+  delta_h = -msg.angular.z
+  delta_v = -msg.linear.x
+
+  trajectory = JointTrajectory()
+  trajectory.joint_names = ["head", "neck", "ass", "knee", "foot"]
+
+  point = JointTrajectoryPoint()
+  point.time_from_start = rospy.Duration(0.5)
+  point.positions = [
+    joint_states["head"] + delta_h / 10.0,
+    joint_states["neck"] + delta_v / 10.0,
+    joint_states["ass"],
+    joint_states["knee"],
+    joint_states["foot"],
+  ]
+  trajectory.points.append(point)
+
+  pub_command.publish(trajectory)
+
+def main():
+    global pub_command
+    rospy.init_node("luxo_remote_command")
+    pub_command = rospy.Publisher("/luxo/controller/trajectory/command", JointTrajectory, queue_size = 1)
+    sub_cmd_vel = rospy.Subscriber("/key_vel", Twist, on_cmd_vel)
+    sub_joint_states = rospy.Subscriber("/joint_states", JointState, on_joint_states)
+    rospy.spin()
+
+if __name__ == "__main__":
+    main()
