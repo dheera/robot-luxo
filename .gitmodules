@@ -1,6 +1,3 @@
-[submodule "catkin_ws/src/ros-pwm-pca9685"]
-	path = catkin_ws/src/ros-pwm-pca9685
-	url = git@github.com:/dheera/ros-pwm-pca9685
 [submodule "catkin_ws/src/ros-imu-bno055"]
 	path = catkin_ws/src/ros-imu-bno055
 	url = git@github.com:/dheera/ros-imu-bno055
