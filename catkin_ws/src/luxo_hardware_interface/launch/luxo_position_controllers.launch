@@ -2,7 +2,16 @@
     <rosparam file="$(find luxo_hardware_interface)/config/hardware.yaml" command="load"/>
     <rosparam file="$(find luxo_hardware_interface)/config/controllers.yaml" command="load"/>
     <rosparam file="$(find luxo_hardware_interface)/config/joint_limits.yaml" command="load"/>
-    <node name="luxo_hardware_interface" pkg="luxo_hardware_interface" type="luxo_hardware_interface_node" output="screen"/>
+    <param name="robot_description" textfile="$(find luxo_hardware_interface)/config/luxo.urdf"/>
+    <node name="luxo_hardware_interface" pkg="luxo_hardware_interface" type="luxo_hardware_interface_node" output="screen" respawn="true" respawn_delay="2"/>
+
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/"
+        args="
+            /luxo/controller/state
+            /luxo/controller/trajectory
+        " respan="true" respawn_delay="2"/>
+
+    <!-- 
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/"
         args="
             /luxo/controller/state
@@ -12,4 +21,6 @@
             /luxo/controller/position/neck
             /luxo/controller/position/head
         "/>
+    -->
+
 </launch>

@@ -50,6 +50,10 @@ namespace luxo_hardware_interface
             std::vector<double> joint_upper_limits_;
             std::vector<double> joint_effort_limits_;
 
+            std::vector<int> pwm_min_;
+            std::vector<int> pwm_max_;
+            std::vector<int> pwm_channel_;
+
     }; // class
 
 } // namespace

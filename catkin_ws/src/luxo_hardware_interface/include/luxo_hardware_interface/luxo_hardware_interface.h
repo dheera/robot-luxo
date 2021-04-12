@@ -18,6 +18,8 @@ using joint_limits_interface::JointLimits;
 using joint_limits_interface::SoftJointLimits;
 using joint_limits_interface::PositionJointSoftLimitsHandle;
 using joint_limits_interface::PositionJointSoftLimitsInterface;
+using joint_limits_interface::PositionJointSaturationHandle;
+using joint_limits_interface::PositionJointSaturationInterface;
 
 
 namespace luxo_hardware_interface
@@ -38,11 +40,14 @@ namespace luxo_hardware_interface
         protected:
             // luxocpp::luxo luxo;
             ros::NodeHandle nh_;
+            ros::Publisher pub_command_;
             ros::Timer non_realtime_loop_;
             ros::Duration control_period_;
             ros::Duration elapsed_time_;
             PositionJointInterface positionJointInterface;
-            PositionJointSoftLimitsInterface positionJointSoftLimitsInterface;
+            // PositionJointSoftLimitsInterface positionJointSoftLimitsInterface;
+            PositionJointSaturationInterface positionJointSaturationInterface;
+
             double loop_hz_;
             boost::shared_ptr<controller_manager::ControllerManager> controller_manager_;
             double p_error_, v_error_, e_error_;
