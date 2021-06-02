@@ -7,20 +7,7 @@ sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31
 
 sudo apt update
 
-sudo apt install \
-  ros-melodic-desktop-full \
-  ros-melodic-serial \
-  ros-melodic-dynamic-reconfigure \
-  ros-melodic-ddynamic-reconfigure \
-  ros-melodic-joint-limits-interface \
-  ros-melodic-transmission-interface \
-  ros-melodic-ros-control \
-  ros-melodic-joint-state-publisher \
-  ros-melodic-joint-state-controller \
-  ros-melodic-joint-trajectory-controller \
-  ros-melodic-ros-controllers \
-  ros-melodic-controller-manager \
-  liburdfdom-tools
+cat apt-installs-ros.txt | xargs sudo apt-get install -y
 
 sudo rosdep init
 rosdep update
