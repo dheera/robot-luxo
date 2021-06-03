@@ -4,6 +4,7 @@ project(system_stats)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
+  diagnostic_msgs
 )
 
 catkin_package(
