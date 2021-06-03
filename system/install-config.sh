@@ -1,4 +1,8 @@
 #!/bin/bash
+dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd && echo x)"
+dir="${dir%x}"
+cd $dir
+
 echo "Copying files ..."
 sudo cp -rv root/* /
 
