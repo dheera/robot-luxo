@@ -43,7 +43,7 @@ See .stl files in design/
 
 ### 0. Get the image
 
-Download [Ubuntu 18.04.5 LTS](http://cdimage.ubuntu.com/ubuntu/releases/18.04.5/release/) for Raspberry Pi 3 32-bit (aka "hard float").
+Download [Ubuntu 18.04.5 LTS](http://cdimage.ubuntu.com/ubuntu/releases/18.04.5/release/) for Raspberry Pi 3 32-bit (aka "hard float"). The Pi 3 image will work on a Pi 4.
 
 I don't know if 64-bit works with the entire stack, let me know if you try.
 
