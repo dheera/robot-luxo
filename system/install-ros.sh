@@ -9,8 +9,8 @@ sudo apt update
 
 cat apt-installs-ros.txt | xargs sudo apt-get install -y
 
+source /opt/ros/melodic/setup.bash
+
 sudo rosdep init
 rosdep update
-
-echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 
