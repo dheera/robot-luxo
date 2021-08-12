@@ -22,13 +22,13 @@ def on_cmd_vel(msg):
   trajectory.joint_names = ["head", "neck", "ass", "knee", "foot"]
 
   point = JointTrajectoryPoint()
-  point.time_from_start = rospy.Duration(0.5)
+  point.time_from_start = rospy.Duration(0.25)
   point.positions = [
     joint_states["head"] + delta_h / 10.0,
     joint_states["neck"] + delta_v / 10.0,
-    joint_states["ass"],
+    joint_states["ass"] + delta_v / 20.0,
     joint_states["knee"],
-    joint_states["foot"],
+    joint_states["foot"] - delta_h / 20.0,
   ]
   trajectory.points.append(point)
 

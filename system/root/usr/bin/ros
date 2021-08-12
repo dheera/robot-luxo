@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ -d /opt/ros/noetic ]; then
+	source /opt/ros/noetic/setup.bash
+elif [ -d /opt/ros/melodic ]; then
+	source /opt/ros/melodic/setup.bash
+elif [ -d /opt/ros/lunar ]; then
+	source /opt/ros/lunar/setup.bash
+elif [ -d /opt/ros/kinetic ]; then
+	source /opt/ros/kinetic/setup.bash
+fi
+
+${@:1}
