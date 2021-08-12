@@ -52,7 +52,7 @@ I don't know if 64-bit works with the entire stack, let me know if you try.
 Login in with user ubuntu, password ubuntu, and edit this file:
 
 ```
-sudo nano 50-cloud-init.yaml
+sudo nano /etc/netplan/50-cloud-init.yaml
 ```
 
 Add this to the file:
