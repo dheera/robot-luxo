@@ -1,0 +1,28 @@
+<launch>
+    <node name="web_video_server" pkg="web_video_server" type="web_video_server"></node>
+    <node ns="pwm" name="pwm_node" pkg="pwm_pca9685" type="pca9685_node" respawn="true" respawn_delay="2">
+      <rosparam>
+        device: /dev/i2c-1
+        address: 64
+        frequency: 50
+        timeout: [-5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000]
+      </rosparam>
+    </node>
+
+  <node ns="light" name="light_node" pkg="light" type="light_node" respawn="true" respawn_delay="2" launch-prefix="sudo ros">
+  </node>
+
+  <node name="camera" pkg="usb_cam" type="usb_cam_node" output="screen" respawn="true" respawn_delay="2">
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="framerate" value="30" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="camera" />
+    <param name="io_method" value="mmap"/>
+  </node>
+  <group>
+    <remap from="/command" to="/pwm/command"/>
+    <include file="$(find luxo_hardware_interface)/launch/luxo_position_controllers.launch"/>
+  </group>
+</launch>
