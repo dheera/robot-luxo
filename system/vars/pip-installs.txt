@@ -2,6 +2,7 @@ psutil
 pyserial
 pyyaml
 rospkg
+simplejpeg
 tornado
 tqdm
 rpi_ws281x
