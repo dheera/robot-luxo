@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ -f /opt/ros/melodic ]; then
+	source /opt/ros/melodic
+fi
+
+${@:1}
