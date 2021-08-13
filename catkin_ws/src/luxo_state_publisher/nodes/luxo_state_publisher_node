@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+
+import rospy
+import numpy as np
+import math
+from tf.transformations import *
+import tf2_ros
+
+from sensor_msgs.msg import JointState
+from tf2_msgs.msg import TFMessage
+from geometry_msgs.msg import TransformStamped, Quaternion
+
+def on_joint_state(msg):
+    global br
+    for i, name in enumerate(msg.name):
+        if name == "foot":
+            tf = TransformStamped()
+            tf.header.frame_id = "base_link"
+            tf.child_frame_id = "foot_link"
+            angle = (msg.position[i] - 0.5) * 1.39641179
+            tf.transform.rotation = Quaternion(*quaternion_from_euler(0.0, 0.0, angle))
+            tf.transform.translation.z = 0.033
+            br.sendTransform(tf)
+
+            tf = TransformStamped()
+            tf.header.frame_id = "foot_link"
+            tf.child_frame_id = "knee_link"
+            offset = 0.0
+            tf.transform.translation.x = 0.059
+            tf.transform.translation.z = 0.038
+            br.sendTransform(tf)
+
+        if name == "knee":
+            tf = TransformStamped()
+            tf.header.frame_id = "knee_link"
+            tf.child_frame_id = "ass_link"
+            offset = 0.0
+            angle = (msg.position[i] - 0.5) * 1.39641179 + offset
+            tf.transform.translation.x = -0.09 * np.cos(angle)
+            tf.transform.translation.z = 0.038 * np.sin(angle)
+            br.sendTransform(tf)
+
+        if name == "ass":
+            tf = TransformStamped()
+            tf.header.frame_id = "ass_link"
+            tf.child_frame_id = "neck_link"
+            offset = 0.0
+            angle = (msg.position[i] - 0.5) * 1.39641179 + offset
+            tf.transform.translation.x = 0.09 * np.cos(angle)
+            tf.transform.translation.z = 0.038 * np.sin(angle)
+            br.sendTransform(tf)
+
+        if name == "neck":
+            tf = TransformStamped()
+            tf.header.frame_id = "neck_link"
+            tf.child_frame_id = "head_link"
+            offset = 0.0
+            angle = (msg.position[i] - 0.5) * 1.39641179 + offset
+            tf.transform.rotation = Quaternion(*quaternion_from_euler(0.0, angle, 0.0))
+            br.sendTransform(tf)
+
+        if name == "head":
+            tf = TransformStamped()
+            tf.header.frame_id = "head_link"
+            tf.child_frame_id = "head"
+            offset = 0.0
+            angle = (msg.position[i] - 0.5) * 1.39641179 + offset
+            tf.transform.rotation = Quaternion(*quaternion_from_euler(0.0, 0.0, angle))
+            tf.transform.translation.z = 0.06
+            br.sendTransform(tf)
+
+def main():
+    global br
+    rospy.init_node("luxo_state_publisher")
+    sub_joint_states = rospy.Subscriber("joint_states", JointState, on_joint_state)
+    br = tf2_ros.TransformBroadcaster()
+
+    rospy.spin()
+
+if __name__ == "__main__":
+    main()

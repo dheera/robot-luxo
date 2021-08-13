@@ -11,7 +11,7 @@
         device: /dev/i2c-1
         address: 64
         frequency: 50
-        timeout: [-5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000, -5000]
+        timeout: [-30000, -30000, -30000, -30000, -30000, -30000, -30000, -30000, -30000, -30000, -30000, -30000, -30000, -30000, -30000, -30000]
       </rosparam>
     </node>
     <node ns="pwm" name="animation_node" pkg="animation" type="animation_node" respawn="true" respawn_delay="2">
@@ -37,8 +37,6 @@
     <param name="pixel_format" value="yuyv" />
     <param name="camera_frame_id" value="camera" />
     <param name="io_method" value="mmap"/>
-  </node>
-  <node name="rosboard_node" pkg="rosboard" type="rosboard_node" respawn="true" respawn_delay="2">
   </node>
   <group>
     <remap from="/command" to="/pwm/command"/>

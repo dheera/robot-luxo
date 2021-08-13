@@ -1,10 +1,16 @@
 <robot name="luxo">
-  <link name="base_link"/>
-  <link name="foot_link"/>
-  <link name="knee_link"/>
-  <link name="ass_link"/>
-  <link name="neck_link"/>
-  <link name="head_link"/>
+  <link name="base_link">
+  </link>
+  <link name="foot_link">
+  </link>
+  <link name="knee_link">
+  </link>
+  <link name="ass_link">
+  </link>
+  <link name="neck_link">
+  </link>
+  <link name="head_link">
+  </link>
 
   <joint name="foot" type="continuous">
     <parent link="base_link"/>

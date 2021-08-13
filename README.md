@@ -31,7 +31,7 @@ See .stl files in design/
 
 #### Other electronics
 
-* 1 x Raspberry Pi 3 B+
+* 1 x Raspberry Pi 4
 * 1 x [IMX290 USB camera](https://www.amazon.com/gp/product/B07L6TPB35/)
 * 1 x [12x5050 Neopixel ring](https://www.adafruit.com/product/1643)
 * 1 x [BNO055 breakout](https://www.amazon.com/Adafruit-Absolute-Orientation-Fusion-Breakout/dp/B017PEIGIG)
@@ -39,4 +39,58 @@ See .stl files in design/
 * 1 x [12V to 6V 3A DC-DC](https://www.amazon.com/gp/product/B00CGQRIFG/) for servos
 * 1 x [12V to 5V 3A DC-DC](https://www.amazon.com/gp/product/B00C63TLCC/) for Pi
 
-## Code
+## Software setup
+
+### 0. Get the image
+
+Download [Ubuntu 18.04.5 LTS](http://cdimage.ubuntu.com/ubuntu/releases/18.04.5/release/) for Raspberry Pi 3 32-bit (aka "hard float"). The Pi 3 image will work on a Pi 4.
+
+I don't know if 64-bit works with the entire stack, let me know if you try.
+
+### 1. Set up Wi-Fi
+
+Login in with user ubuntu, password ubuntu, and edit this file:
+
+```
+sudo nano /etc/netplan/50-cloud-init.yaml
+```
+
+Add this to the file:
+
+```
+    wifis:
+        wlan0:
+            optional: true
+            access-points:
+                "YOUR-SSID-NAME":
+                    password: "YOUR-NETWORK-PASSWORD"
+            dhcp4: true
+```
+
+Check for errors in the config:
+
+```
+sudo netplan –debug try
+```
+
+Apply the config:
+
+```
+sudo netplan --debug apply
+sudo reboot
+```
+
+After this your device should be online.
+
+### 2. Install the system
+
+```
+sudo apt update && sudo apt install -y git
+git clone https://github.com/dheera/robot-luxo
+cd robot-luxo
+system/install.sh
+```
+
+# Install ROS packages
+
+to be written
