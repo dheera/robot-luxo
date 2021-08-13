@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+    <head>
+      <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link href="css/material-icons.css" media="all" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="js/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="></script>
+        <link rel="stylesheet" href="css/material.indigo-blue.min.css" />
+        <link rel="stylesheet" href="css/uPlot.min.css">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link href="css/index.css" media="all" rel="stylesheet" type="text/css">
+        
+        <script type="text/javascript" src="js/json5.min.js"></script>
+        <script type="text/javascript" src="js/uPlot.iife.min.js"></script>
+        <script type="text/javascript" src="js/jquery.transit.min.js"></script>
+        <script type="text/javascript" src="js/masonry.pkgd.min.js"></script>
+        <script type="text/javascript" src="js/eventemitter2.min.js"></script>
+        <script text="text/javascript" src="js/import-helper.js"></script>
+        <script type="text/javascript" src="js/material.min.js" defer></script>
+        <script type="text/javascript" src="js/leaflet.js"></script>        
+	      <script type="text/javascript" src="js/gl-matrix.js"></script>
+	      <script type="text/javascript" src="js/litegl.min.js"></script>
+        <script type="text/javascript" src="js/index.js" defer></script>
+
+        <title>ROSboard</title>
+    </head>
+    <body>
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+          <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+              <!-- Title -->
+              <span class="mdl-layout-title">ROSboard</span>
+              <!-- Add spacer, to align navigation to the right -->
+              <div class="mdl-layout-spacer"></div>
+            </div>
+          </header>
+          <div class="mdl-layout__drawer">
+            <nav id="topics-nav" class="mdl-navigation">
+                <div id="topics-nav-system-title" class="topics-nav-title">System</div>
+                <div id="topics-nav-system"></div>
+                <div id="topics-nav-ros-title" class="topics-nav-title">ROS topics</div>
+                <div id="topics-nav-ros"></div>
+                <div style="opacity:0.3;" id="topics-nav-unsupported"></div>
+            </nav>
+          </div>
+          <main class="mdl-layout__content">
+            <div class="page-content">
+              <div class="grid">
+              </div>
+            </div>
+          </main>
+        </div>
+        
+  <div id="demo-toast-example" class="mdl-js-snackbar mdl-snackbar">
+    <div class="mdl-snackbar__text"></div>
+    <button class="mdl-snackbar__action" type="button"></button>
+  </div>
+
+    </body>
+</html>
