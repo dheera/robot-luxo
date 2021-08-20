@@ -1,3 +1,0 @@
-[submodule "catkin_ws/src/ros-imu-bno055"]
-	path = catkin_ws/src/ros-imu-bno055
-	url = git@github.com:/dheera/ros-imu-bno055
