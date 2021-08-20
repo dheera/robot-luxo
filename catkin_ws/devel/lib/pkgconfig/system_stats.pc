@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/robot-luxo/catkin_ws/devel
+
+Name: system_stats
+Description: Description of system_stats
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

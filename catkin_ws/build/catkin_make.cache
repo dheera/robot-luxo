@@ -1,0 +1,2 @@
+light:luxo_hardware_interface:remote:ros-pwm-pca9685/pwm_pca9685:ros-system-stats/system_stats:rosboard
+-DCATKIN_DEVEL_PREFIX=/home/ubuntu/robot-luxo/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/opt/ros/noetic -G Unix Makefiles

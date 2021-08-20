@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /opt/ros/noetic/setup.sh

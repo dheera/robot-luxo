@@ -1,0 +1,164 @@
+#!/usr/bin/env node
+"use strict";
+
+const DATA_IN = 'i';
+const DATA_OUT = 'o';
+
+const sshpk = require('sshpk');
+const fs = require('fs');
+const os = require('os');
+const io = require('socket.io-client');
+const ros = require('rosnodejs');
+const std_msgs = ros.require('std_msgs');
+const geometry_msgs = ros.require('geometry_msgs');
+
+const remoteConfig = {
+  "name": os.hostname(),
+  "ui": {
+    "widgets": [
+       {
+         "type": "slider",
+         "id": "slider0",
+         "min": 2800,
+         "max": 7600,
+         "value": 5200,
+       },
+       {
+         "type": "slider",
+         "id": "slider1",
+         "min": 2800,
+         "max": 7600,
+         "value": 5200,
+       },
+       {
+         "type": "slider",
+         "id": "slider2",
+         "min": 2800,
+         "max": 7600,
+         "value": 5200,
+       },
+       {
+         "type": "slider",
+         "id": "slider3",
+         "min": 2800,
+         "max": 7600,
+         "value": 5200,
+       },
+       {
+         "type": "slider",
+         "id": "slider4",
+         "min": 2800,
+         "max": 7600,
+         "value": 5200,
+       },
+    ]
+  }
+}
+
+// ssh
+
+let publicKeyText = fs.readFileSync(os.homedir() + '/.ssh/id_rsa.pub');
+let privateKeyText = fs.readFileSync(os.homedir() + '/.ssh/id_rsa');
+let publicKey = sshpk.parseKey(publicKeyText, 'ssh');
+let privateKey = sshpk.parsePrivateKey(privateKeyText, 'ssh');
+
+// ros init
+
+let nh = null;
+let sub_rosout = null;
+let pub_command = null;
+
+ros.initNode('remote_node').then(() => {
+  ros.log.info("initialized")
+  nh = ros.nh;
+
+  sub_rosout = nh.subscribe('/rosout_agg', 'rosgraph_msgs/Log', (msg) => {
+    if(msg.level < 3) return;
+    socket.emit('rosout', {
+      level: msg.level,
+      name: msg.name,
+      msg: msg.msg,
+    });
+  });
+
+  pub_command = nh.advertise('/pwm/command', 'std_msgs/Int32MultiArray')
+
+});
+
+// socket.io
+
+var socket = io('https://robot.dheera.net/robot');
+
+socket.on('connect', () => {
+  ros.log.info('connecting');
+  socket.emit('auth_fingerprint', publicKey.fingerprint().toString());
+});
+
+socket.on('auth_verify', (msg, callback) => {
+  ros.log.info('verifying')
+  if(!msg.data) {
+    console.log('did not receive data to sign');
+    return;
+  }
+
+  let s = privateKey.createSign('sha256');
+  s.update(msg.data);
+  let signature = s.sign();
+  callback({signature: signature.toString(), type: signature.type});
+});
+
+socket.on(DATA_IN, (data) => {
+  console.log('DATA_IN', data);
+  if(data[0] === 'slider0' && data[1] === 'v') {
+    let m = new std_msgs.msg.Int32MultiArray();
+    m.data = [ -1, -1, -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+    pub_command.publish(m);
+  }
+  if(data[0] === 'slider1' && data[1] === 'v') {
+    let m = new std_msgs.msg.Int32MultiArray();
+    m.data = [ -1, -1, -1, -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1, -1 ];
+    pub_command.publish(m);
+  }
+  if(data[0] === 'slider2' && data[1] === 'v') {
+    let m = new std_msgs.msg.Int32MultiArray();
+    m.data = [ -1, -1, -1, -1, -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1, -1 ];
+    pub_command.publish(m);
+  }
+  if(data[0] === 'slider3' && data[1] === 'v') {
+    let m = new std_msgs.msg.Int32MultiArray();
+    m.data = [ -1, -1, -1, -1, -1, -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1, -1 ];
+    pub_command.publish(m);
+  }
+  if(data[0] === 'slider4' && data[1] === 'v') {
+    let m = new std_msgs.msg.Int32MultiArray();
+    m.data = [ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, data[2], -1, -1, -1, -1, -1 ];
+    pub_command.publish(m);
+  }
+});
+
+socket.on('auth_status', (status) => {
+  if(status !==1 ) {
+    ros.log.warn("authentication failed");
+    process.exit();
+  }
+  ros.log.info("authentication success");
+  socket.emit('remote_config', remoteConfig);
+});
+
+socket.on('disconnect', () => {
+  console.log('disconnected');
+  process.exit();
+});
+
+function onStick(pos) {
+  if(pos.length !== 2) return;
+  if(!(typeof(pos[0]) === "number")) return;
+  if(!(typeof(pos[1]) === "number")) return;
+
+  let t = new geometry_msgs.msg.Twist();
+  let x = pos[0];
+  let y = pos[1];
+  t.linear.x = -y/5;
+  t.angular.z = -x;
+  pub_motion.publish(t);
+}

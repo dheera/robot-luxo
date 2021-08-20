@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+
+import json
+import socket
+import psutil
+import rospy
+import re
+import sys
+import time
+import subprocess
+
+from std_msgs.msg import String, Int32, Int64, Float32
+from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
+from sensor_msgs.msg import Temperature
+
+def mean(list):
+    return sum(list)/len(list)
+
+if __name__ == "__main__":
+    rospy.init_node("status_system_node")
+
+    if int(psutil.__version__.split(".")[0]) < 5:
+        rospy.logerr("Please install psutil>=5.0.0")
+        exit(0)
+
+    param_gpu = rospy.get_param("~gpu", False) # nvidia only for now; requires nvidia-smi
+    param_interval = rospy.get_param("~interval", 5.0)
+    pub_psutil = rospy.Publisher("diagnostics", DiagnosticArray, queue_size = 1)
+
+    pub_cpu_temp = rospy.Publisher("system/cpu/temp", Temperature, queue_size = 1)
+    pub_cpu_usage = rospy.Publisher("system/cpu/usage", Float32, queue_size = 1)
+    pub_disk_usage = rospy.Publisher("system/disk/usage", Float32, queue_size = 1)
+    pub_net_bytes_recv= rospy.Publisher("system/net/bytes_recv", Int64, queue_size = 1)
+    pub_net_bytes_sent= rospy.Publisher("system/net/bytes_sent", Int64, queue_size = 1)
+    pub_mem_usage_virtual= rospy.Publisher("system/mem/usage_virtual", Float32, queue_size = 1)
+    pub_mem_usage_swap= rospy.Publisher("system/mem/usage_swap", Float32, queue_size = 1)
+
+    if param_gpu:
+        pub_gpu_temp = rospy.Publisher("system/gpu/temp", Temperature, queue_size = 1)
+        pub_gpu_power_draw = rospy.Publisher("system/gpu/power_draw", Float32, queue_size = 1)
+        pub_gpu_power_state = rospy.Publisher("system/gpu/power_state", String, queue_size = 1)
+
+    p = psutil.Process()
+
+    rate = rospy.Rate(1.0/param_interval)
+
+    while not rospy.is_shutdown():
+        rate.sleep()
+
+        status = {"cpu":{}, "net":{}, "mem":{}, "disk": {}}
+
+        status_cpu = DiagnosticStatus()
+        status_cpu.name = "CPU"
+        status_net = DiagnosticStatus()
+        status_net.name = "Network"
+        status_mem = DiagnosticStatus()
+        status_mem.name = "Memory"
+        status_disk = DiagnosticStatus()
+        status_disk.name = "Disk"
+
+        if param_gpu:
+            status_gpu = DiagnosticStatus()
+            status_gpu.name = "GPU"
+
+        with p.oneshot():
+            sensors_temperatures = psutil.sensors_temperatures()
+            if 'coretemp' in sensors_temperatures:
+                cpu_coretemp = mean(list(map(lambda x:x.current, sensors_temperatures['coretemp'])))
+                status_cpu.values.append(KeyValue("coretemp", str(cpu_coretemp)))
+                pub_cpu_temp.publish(Temperature(temperature=cpu_coretemp))
+                
+            cpu_usage = mean(psutil.cpu_percent(percpu=True))
+            status_cpu.values.append(KeyValue("usage", str(cpu_usage)))
+            if pub_cpu_usage.get_num_connections() > 0:
+                pub_cpu_usage.publish(Float32(data=cpu_usage))
+
+            disk_usage = psutil.disk_usage('/').percent
+            status_disk.values.append(KeyValue("usage", str(disk_usage)))
+            if pub_disk_usage.get_num_connections() > 0:
+                pub_disk_usage.publish(Float32(data=disk_usage))
+
+            net_bytes_sent = psutil.net_io_counters().bytes_sent
+            net_bytes_recv = psutil.net_io_counters().bytes_recv
+            status_net.values.append(KeyValue("bytes_sent", str(net_bytes_sent)))
+            status_net.values.append(KeyValue("bytes_recv", str(net_bytes_recv)))
+            if pub_net_bytes_sent.get_num_connections() > 0:
+                pub_net_bytes_sent.publish(Int64(data=net_bytes_sent))
+            if pub_net_bytes_recv.get_num_connections() > 0:
+                pub_net_bytes_recv.publish(Int64(data=net_bytes_recv))
+
+            net_if_addrs = psutil.net_if_addrs()
+            for k in net_if_addrs:
+                net_if_addrs[k] = list(filter(lambda x: x.family == socket.AF_INET, net_if_addrs[k]))
+                net_if_addrs[k] = list(map(lambda x: x.address, net_if_addrs[k]))
+            status_net.values.append(KeyValue("if_addrs", str(net_if_addrs)))
+
+            mem_usage_virtual = psutil.virtual_memory().percent
+            mem_usage_swap = psutil.swap_memory().percent
+            status_mem.values.append(KeyValue("usage_virtual", str(mem_usage_virtual)))
+            status_mem.values.append(KeyValue("usage_swap", str(mem_usage_swap)))
+            if pub_mem_usage_virtual.get_num_connections() > 0:
+                pub_mem_usage_virtual.publish(Float32(data=mem_usage_virtual))
+            if pub_mem_usage_swap.get_num_connections() > 0:
+                pub_mem_usage_swap.publish(Float32(data=mem_usage_swap))
+
+        if param_gpu:
+            nvinfo =  subprocess.Popen(['nvidia-smi', '-q', '-x'], stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+
+            try:
+                for line in nvinfo[0].decode().split('\n'):
+                    if '<gpu_temp>' in line and ' C' in line:
+                        gpu_temp = float(re.search('<gpu_temp>(.*) C</gpu_temp>', line).group(1))
+                        status_gpu.values.append(KeyValue("temp", str(gpu_temp)))
+                        if pub_gpu_temp.get_num_connections() > 0:
+                            pub_gpu_temp.publish(Temperature(temperature=gpu_temp))
+                    if '<power_draw>' in line and ' W' in line:
+                        gpu_power_draw = float(re.search('<power_draw>(.*) W</power_draw>', line).group(1))
+                        status_gpu.values.append(KeyValue("power_draw", str(gpu_power_draw)))
+                        if pub_gpu_power_draw.get_num_connections() > 0:
+                            pub_gpu_power_draw.publish(Float32(data=gpu_power_draw))
+                    if '<power_state>' in line:
+                        gpu_power_state = str(re.search('<power_state>(.*)</power_state>', line).group(1))
+                        status_gpu.values.append(KeyValue("power_state", str(gpu_power_state)))
+                        if pub_gpu_power_state.get_num_connections() > 0:
+                            pub_gpu_power_state.publish(String(data=gpu_power_state))
+
+            except (AttributeError, ValueError) as e:
+                rospy.logwarn("error updating gpu statistics")
+                status_gpu.values.append(KeyValue("temp", ""))
+                status_gpu.values.append(KeyValue("power_draw", ""))
+                status_gpu.values.append(KeyValue("power_state", ""))
+
+        msg = DiagnosticArray()
+        msg.status = [status_cpu, status_net, status_mem, status_disk]
+        if param_gpu:
+            msg.status.append(status_gpu)
+
+        pub_psutil.publish(msg)

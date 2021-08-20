@@ -10,6 +10,8 @@ echo "Installing pip packages ..."
 ./install-pip.sh
 echo "Installing ROS ..."
 ./install-ros.sh
+echo "Installing ROS extras ..."
+./install-ros-more.sh
 echo "Installing nodejs ..."
 ./install-nodejs.sh
 echo "Configuring system ..."
