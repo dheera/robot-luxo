@@ -1,22 +1,90 @@
-/* bno055_i2c_activity.cpp
+/* bno055_i2c_node.cpp
  * Author: Dheera Venkatraman <dheera@dheera.net>
  *
- * Defines a BNO055I2C Activity class, constructed with node handles
- * and which handles all ROS duties.
+ * Instantiates a BNO055I2CDriver class, as well as
+ * a Watchdog that causes this node to die if things aren't
+ * working.
  */
 
-#include "imu_bno055/bno055_i2c_activity.h"
+#include <imu_bno055/bno055_i2c_driver.h>
+#include "watchdog/watchdog.h"
+#include <csignal>
 
-namespace imu_bno055 {
+#include <ros/ros.h>
+#include <sensor_msgs/Imu.h>
+#include <sensor_msgs/MagneticField.h>
+#include <sensor_msgs/Temperature.h>
+#include <std_srvs/Trigger.h>
+#include <std_msgs/UInt8.h>
+#include <diagnostic_msgs/DiagnosticStatus.h>
+#include <diagnostic_msgs/DiagnosticArray.h>
+#include <diagnostic_msgs/KeyValue.h>
 
-// ******** constructors ******** //
+#include <memory>
 
-BNO055I2CActivity::BNO055I2CActivity(ros::NodeHandle &_nh, ros::NodeHandle &_nh_priv) :
-  nh(_nh), nh_priv(_nh_priv) {
-    ROS_INFO("initializing");
-    nh_priv.param("device", param_device, (std::string)"/dev/i2c-1");
-    nh_priv.param("address", param_address, (int)BNO055_ADDRESS_A);
-    nh_priv.param("frame_id", param_frame_id, (std::string)"imu");
+class BNO055I2CNode {
+    public:
+        BNO055I2CNode(int argc, char* argv[]);
+        void run();
+        bool readAndPublish();
+        void stop();
+        bool onSrvReset(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
+    private:
+        ros::NodeHandle* nh;
+        ros::NodeHandle* nh_priv;
+        std::unique_ptr<imu_bno055::BNO055I2CDriver> imu;
+
+        std::string param_device;
+        int param_address;
+        double param_rate;
+        std::string param_frame_id;
+
+        diagnostic_msgs::DiagnosticStatus current_status;
+
+        ros::Publisher pub_data;
+        ros::Publisher pub_raw;
+        ros::Publisher pub_mag;
+        ros::Publisher pub_temp;
+        ros::Publisher pub_status;
+        ros::ServiceServer srv_reset;
+
+        std::unique_ptr<ros::Rate> rate;
+
+        watchdog::Watchdog watchdog;
+
+        int seq;
+};
+
+BNO055I2CNode::BNO055I2CNode(int argc, char* argv[]) {
+    ros::init(argc, argv, "bno055_node");
+    nh = new ros::NodeHandle();
+    nh_priv = new ros::NodeHandle("~");
+
+    if(!nh || !nh_priv) {
+        ROS_FATAL("Failed to initialize node handles");
+        ros::shutdown();
+        return;
+    }
+
+    nh_priv->param("device", param_device, (std::string)"/dev/i2c-1");
+    nh_priv->param("address", param_address, (int)BNO055_ADDRESS_A);
+    nh_priv->param("frame_id", param_frame_id, (std::string)"imu");
+    nh_priv->param("rate", param_rate, (double)100);
+ 
+    imu = std::make_unique<imu_bno055::BNO055I2CDriver>(param_device, param_address);
+
+    imu->init();
+
+    pub_data = nh->advertise<sensor_msgs::Imu>("data", 1);
+    pub_raw = nh->advertise<sensor_msgs::Imu>("raw", 1);
+    pub_mag = nh->advertise<sensor_msgs::MagneticField>("mag", 1);
+    pub_temp = nh->advertise<sensor_msgs::Temperature>("temp", 1);
+    pub_status = nh->advertise<diagnostic_msgs::DiagnosticStatus>("status", 1);
+
+    srv_reset = nh->advertiseService("reset", &BNO055I2CNode::onSrvReset, this);
+
+    seq = 0;
+
 
     current_status.level = 0;
     current_status.name = "BNO055 IMU";
@@ -51,112 +119,30 @@ BNO055I2CActivity::BNO055I2CActivity(ros::NodeHandle &_nh, ros::NodeHandle &_nh_
     sys_err.key = "System error";
     sys_err.value = "";
     current_status.values.push_back(sys_err);
+
+
+    rate =std::make_unique<ros::Rate>(param_rate);
 }
 
-// ******** private methods ******** //
-
-bool BNO055I2CActivity::reset() {
-    int i = 0;
-
-    _i2c_smbus_write_byte_data(file, BNO055_OPR_MODE_ADDR, BNO055_OPERATION_MODE_CONFIG);
-    ros::Duration(0.025).sleep();
-
-    // reset
-    _i2c_smbus_write_byte_data(file, BNO055_SYS_TRIGGER_ADDR, 0x20);
-    ros::Duration(0.025).sleep();
-
-    // wait for chip to come back online
-    while(_i2c_smbus_read_byte_data(file, BNO055_CHIP_ID_ADDR) != BNO055_ID) {
-        ros::Duration(0.010).sleep();
-        if(i++ > 500) {
-            ROS_ERROR_STREAM("chip did not come back online in 5 seconds after reset");
-            return false;
+void BNO055I2CNode::run() {
+    while(ros::ok()) {
+        rate->sleep();
+        if(readAndPublish()) {
+            watchdog.refresh();
         }
     }
-    ros::Duration(0.100).sleep();
-
-    // normal power mode
-    _i2c_smbus_write_byte_data(file, BNO055_PWR_MODE_ADDR, BNO055_POWER_MODE_NORMAL);
-    ros::Duration(0.010).sleep();
-
-    _i2c_smbus_write_byte_data(file, BNO055_PAGE_ID_ADDR, 0);
-    _i2c_smbus_write_byte_data(file, BNO055_SYS_TRIGGER_ADDR, 0);
-    ros::Duration(0.025).sleep();
-
-    _i2c_smbus_write_byte_data(file, BNO055_OPR_MODE_ADDR, BNO055_OPERATION_MODE_NDOF);
-    ros::Duration(0.025).sleep();
-
-    return true;
 }
 
-// ******** public methods ******** //
+bool BNO055I2CNode::readAndPublish() {
+    imu_bno055::IMURecord record;
 
-bool BNO055I2CActivity::start() {
-    ROS_INFO("starting");
-
-    if(!pub_data) pub_data = nh.advertise<sensor_msgs::Imu>("data", 1);
-    if(!pub_raw) pub_raw = nh.advertise<sensor_msgs::Imu>("raw", 1);
-    if(!pub_mag) pub_mag = nh.advertise<sensor_msgs::MagneticField>("mag", 1);
-    if(!pub_temp) pub_temp = nh.advertise<sensor_msgs::Temperature>("temp", 1);
-    if(!pub_status) pub_status = nh.advertise<diagnostic_msgs::DiagnosticStatus>("status", 1);
-
-    if(!service_calibrate) service_calibrate = nh.advertiseService(
-        "calibrate",
-        &BNO055I2CActivity::onServiceCalibrate,
-        this
-    );
-
-    if(!service_reset) service_reset = nh.advertiseService(
-        "reset",
-        &BNO055I2CActivity::onServiceReset,
-        this
-    );
-
-    file = open(param_device.c_str(), O_RDWR);
-    if(ioctl(file, I2C_SLAVE, param_address) < 0) {
-        ROS_ERROR("i2c device open failed");
-        return false;
+    try {
+        record = imu->read();
+    } catch(const std::runtime_error& e) {
+        ROS_WARN_STREAM(e.what());
     }
-
-    if(_i2c_smbus_read_byte_data(file, BNO055_CHIP_ID_ADDR) != BNO055_ID) {
-        ROS_ERROR("incorrect chip ID");
-        return false;
-    }
-
-    ROS_INFO_STREAM("rev ids:"
-      << " accel:" << _i2c_smbus_read_byte_data(file, BNO055_ACCEL_REV_ID_ADDR)
-      << " mag:" << _i2c_smbus_read_byte_data(file, BNO055_MAG_REV_ID_ADDR)
-      << " gyro:" << _i2c_smbus_read_byte_data(file, BNO055_GYRO_REV_ID_ADDR)
-      << " sw:" << _i2c_smbus_read_word_data(file, BNO055_SW_REV_ID_LSB_ADDR)
-      << " bl:" << _i2c_smbus_read_byte_data(file, BNO055_BL_REV_ID_ADDR));
-
-    if(!reset()) {
-        ROS_ERROR("chip reset and setup failed");
-        return false;
-    }
-
-    return true;
-}
-
-bool BNO055I2CActivity::spinOnce() {
-    ros::spinOnce();
 
     ros::Time time = ros::Time::now();
-
-    IMURecord record;
-
-    unsigned char c = 0;
-
-    seq++;
-
-    // can only read a length of 0x20 at a time, so do it in 2 reads
-    // BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR is the start of the data block that aligns with the IMURecord struct
-    if(_i2c_smbus_read_i2c_block_data(file, BNO055_ACCEL_DATA_X_LSB_ADDR, 0x20, (uint8_t*)&record) != 0x20) {
-        return false;
-    }
-    if(_i2c_smbus_read_i2c_block_data(file, BNO055_ACCEL_DATA_X_LSB_ADDR + 0x20, 0x13, (uint8_t*)&record + 0x20) != 0x13) {
-        return false;
-    }
 
     sensor_msgs::Imu msg_raw;
     msg_raw.header.stamp = time;
@@ -210,7 +196,7 @@ bool BNO055I2CActivity::spinOnce() {
     pub_mag.publish(msg_mag);
     pub_temp.publish(msg_temp);
 
-    if(seq % 50 == 0) {
+    if((seq++) % 50 == 0) {
         current_status.values[DIAG_CALIB_STAT].value = std::to_string(record.calibration_status);
         current_status.values[DIAG_SELFTEST_RESULT].value = std::to_string(record.self_test_result);
         current_status.values[DIAG_INTR_STAT].value = std::to_string(record.interrupt_status);
@@ -220,35 +206,29 @@ bool BNO055I2CActivity::spinOnce() {
         pub_status.publish(current_status);
     }
 
-    return true;    
+    return true;
 }
 
-bool BNO055I2CActivity::stop() {
+void BNO055I2CNode::stop() {
     ROS_INFO("stopping");
-
     if(pub_data) pub_data.shutdown();
     if(pub_raw) pub_raw.shutdown();
     if(pub_mag) pub_mag.shutdown();
     if(pub_temp) pub_temp.shutdown();
     if(pub_status) pub_status.shutdown();
-
-    if(service_calibrate) service_calibrate.shutdown();
-    if(service_reset) service_reset.shutdown();
-
-    return true;
+    if(srv_reset) srv_reset.shutdown();
 }
 
-bool BNO055I2CActivity::onServiceReset(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res) {
-    if(!reset()) {
-        ROS_ERROR("chip reset and setup failed");
+bool BNO055I2CNode::onSrvReset(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res) {
+    if(!(imu->reset())) {
+        throw std::runtime_error("chip reset failed");
         return false;
     }
     return true;
 }
 
-bool BNO055I2CActivity::onServiceCalibrate(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res) {
-    // TODO implement this
-    return true;
-}
-
+int main(int argc, char *argv[]) {
+    BNO055I2CNode node(argc, argv);
+    node.run();
+    return 0;
 }
