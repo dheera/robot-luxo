@@ -7,7 +7,9 @@ libvorbis-dev
 python3-pip
 python3-numba
 python3-numpy
+python3-pil
 python3-scipy
+python3-tornado
 screen
 vim
 python3-rpi.gpio
