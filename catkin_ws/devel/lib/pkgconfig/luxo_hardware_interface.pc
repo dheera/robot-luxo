@@ -1,8 +1,0 @@
-prefix=/home/ubuntu/robot-luxo/catkin_ws/devel
-
-Name: luxo_hardware_interface
-Description: Description of luxo_hardware_interface
-Version: 0.0.1
-Cflags: -I/home/ubuntu/robot-luxo/catkin_ws/src/luxo_hardware_interface/include
-Libs: -L${prefix}/lib -lluxo_hardware_interface
-Requires: hardware_interface controller_manager roscpp control_msgs trajectory_msgs pluginlib transmission_interface urdf control_toolbox joint_limits_interface

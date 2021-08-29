@@ -1,8 +1,0 @@
-prefix=/home/ubuntu/robot-luxo/catkin_ws/devel
-
-Name: pwm_pca9685
-Description: Description of pwm_pca9685
-Version: 1.0.0
-Cflags: -I/home/ubuntu/robot-luxo/catkin_ws/src/ros-pwm-pca9685/pwm_pca9685/include
-Libs: -L${prefix}/lib 
-Requires: 

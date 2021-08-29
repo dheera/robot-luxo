@@ -1,8 +1,0 @@
-prefix=/home/ubuntu/robot-luxo/catkin_ws/devel
-
-Name: rosboard
-Description: Description of rosboard
-Version: 1.2.1
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

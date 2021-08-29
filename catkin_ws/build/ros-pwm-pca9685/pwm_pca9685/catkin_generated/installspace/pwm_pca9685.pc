@@ -1,8 +1,0 @@
-prefix=/opt/ros/noetic
-
-Name: pwm_pca9685
-Description: Description of pwm_pca9685
-Version: 1.0.0
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib 
-Requires: 

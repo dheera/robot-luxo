@@ -1,3 +1,0 @@
-[console_scripts]
-rosboard_node = rosboard.rosboard:main
-

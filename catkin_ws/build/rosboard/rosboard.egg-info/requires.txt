@@ -1,2 +1,0 @@
-setuptools
-tornado>=4.2.1
