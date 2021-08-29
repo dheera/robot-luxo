@@ -13,3 +13,4 @@ python3-tornado
 screen
 vim
 python3-rpi.gpio
+v4l-utils

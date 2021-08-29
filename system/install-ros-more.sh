@@ -37,6 +37,8 @@ elif [[ $ISSUE == *"20.04"* ]]; then
 	git clone --branch noetic-devel https://github.com/ros-controls/realtime_tools
 	git clone --branch noetic-devel https://github.com/ros-controls/ros_controllers
 	git clone --branch noetic-devel https://github.com/ros-perception/image_common
+	git clone --branch master https://github.com/ros-drivers/four_wheel_steering_msgs
+	git clone --branch kinetic-devel https://github.com/ros-controls/urdf_geometry_parser
 	git clone --branch develop https://github.com/ros-drivers/usb_cam
 	git clone https://github.com/dheera/rosboard
 	git clone https://github.com/dheera/rosshow
