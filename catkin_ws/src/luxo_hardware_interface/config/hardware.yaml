@@ -1,6 +1,6 @@
 luxo:
   hardware_interface:
-    loop_hz: 20
+    loop_hz: 50
     joints:
       - foot
       - knee
@@ -9,28 +9,28 @@ luxo:
       - head
     initial_states:
       foot: 0.5
-      knee: 0.35
-      ass: 0.8
-      neck: 0.0
+      knee: 0.3
+      ass: 0.3
+      neck: 1.0
       head: 0.5
     pwm:
       foot:
         min: 3000
-        max: 7400
-        channel: 6
+        max: 7600
+        channel: 0
       knee:
-        min: 3000
-        max: 7400
-        channel: 7
+        min: 3200
+        max: 7000
+        channel: 1
       ass:
-        min: 3000
-        max: 7400
-        channel: 8
+        min: 4100
+        max: 6800
+        channel: 2
       neck:
         min: 3000
-        max: 7400
-        channel: 10
+        max: 7600
+        channel: 3
       head:
         min: 3000
-        max: 7400
-        channel: 9
+        max: 7600
+        channel: 4

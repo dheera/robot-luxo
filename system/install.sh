@@ -9,7 +9,9 @@ echo "Installing apt packages ..."
 echo "Installing pip packages ..."
 ./install-pip.sh
 echo "Installing ROS ..."
-./install-ros.sh
+./install-ros-base.sh
+echo "Installing ROS extras ..."
+./install-ros-more.sh
 echo "Installing nodejs ..."
 ./install-nodejs.sh
 echo "Configuring system ..."

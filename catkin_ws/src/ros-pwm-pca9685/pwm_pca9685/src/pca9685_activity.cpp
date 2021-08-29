@@ -173,7 +173,6 @@ bool PCA9685Activity::spinOnce() {
         // negative timeout: timeout when value doesn't change
 	else if(param_timeout[channel] < 0 && t - last_change_times[channel] > std::abs(param_timeout[channel])) {
           set(channel, param_timeout_value[channel]);
-	  ROS_WARN_STREAM("timeout " << channel);
         }
 	// zero timeout: no timeout
       }
