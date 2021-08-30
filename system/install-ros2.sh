@@ -1,5 +1,9 @@
 #!/bin/bash
 
+ISSUE=`cat /etc/issue`
+
+if [[ $ISSUE == *"20.04"* ]]; then
+
 echo "Installing ROS2 (Foxy) ..."
 
 sudo locale-gen en_US en_US.UTF-8
@@ -20,3 +24,8 @@ sudo apt install -y \
 	ros-foxy-joint-state-publisher \
 	ros-foxy-joint-trajectory-controller
 
+else
+
+echo "Bad Linux distro. Use Ubuntu 20.04."
+
+fi
